@@ -17,15 +17,16 @@ public class Plant : MonoBehaviour
 
     //Plant Life Info
     public float startTime;
-    public float endTime = 30;
+    public float endTime;
     private float currentTime;
     private List<GameObject> Children = new List<GameObject>();
+    public GameObject rewardToSpawn;
 
     private void Start()
     {
         CC = GameObject.Find("Cursor Object").GetComponent<CursorController>();
         startTime = Time.time;
-        endTime = Time.time + 30;
+        endTime += Time.time;
         foreach (Transform child in transform)
         {
             Children.Add(child.gameObject);
@@ -46,9 +47,9 @@ public class Plant : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else
+        else //death by age
         {
-            //spawn flower
+            Instantiate(rewardToSpawn, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.identity);
             CC.InformedDeath(gameObject);
             Destroy(gameObject);
         }

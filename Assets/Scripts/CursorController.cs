@@ -15,7 +15,7 @@ public class CursorController : MonoBehaviour
     public float speed;
 
     //Tool Specific Values
-    private string[] toolList = { "Shovel", "Select", "Watering Can"};
+    private string[] toolList = { "Shovel", "Watering Can", "Select", };
     private int curTool = 0;
     private Image modeSprite;
     private int plantCounter = 0;
@@ -77,21 +77,22 @@ public class CursorController : MonoBehaviour
         //Change Tool
         if (Input.GetButtonDown("X") && !shovelDig.IsPlaying("Shovel_Dig") && !canWater.IsPlaying("Can_Pour"))
         {
-            if(curTool == 0) //WAS SHOVEL
-            {
-                curTool++;
-                modeSprite.sprite = magImg;
-                shovelObj.SetActive(false);
-
-            }
-            else if(curTool == 1)//WAS SELECT
+            if(curTool == 0) //SET TO WATER
             {
                 curTool++;
                 modeSprite.sprite = waterImg;
-                profOBJ.SetActive(false);
+                shovelObj.SetActive(false);
                 waterObj.SetActive(true);
+
             }
-            else //WAS WATERING CAN
+            else if(curTool == 1)//SET TO SELECT
+            {
+                curTool++;
+                modeSprite.sprite = magImg;
+                profOBJ.SetActive(false);
+                waterObj.SetActive(false);
+            }
+            else //SET TO SHOVEL
             {
                 curTool = 0;
                 modeSprite.sprite = shovImg;
