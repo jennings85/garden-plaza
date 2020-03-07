@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 5921408663673255443}
   - component: {fileID: 5921408663673255440}
   - component: {fileID: 8296172669032771635}
+  - component: {fileID: 711940665}
   m_Layer: 0
   m_Name: roseDrop
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,11 +91,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2381556311610715935}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.018764265, y: 0.018989433, z: 0.01521715}
-  m_Center: {x: -0.00025475258, y: 0.00022460293, z: 0.0009087147}
+  m_Size: {x: 0.015, y: 0.015, z: 0.015}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5921408663673255440
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -127,3 +128,16 @@ MonoBehaviour:
   candyValue: 500
   startTime: 0
   endTime: 180
+--- !u!65 &711940665
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2381556311610715935}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.015, y: 0.015, z: 0.015}
+  m_Center: {x: 0, y: 0, z: 0}

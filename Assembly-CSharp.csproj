@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\CursorController.cs" />
     <Compile Include="Assets\Scripts\GardenManager.cs" />
     <Compile Include="Assets\Scripts\Pickup.cs" />
+    <Compile Include="Assets\Scripts\Pinata.cs" />
     <Compile Include="Assets\Scripts\Plant.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Jennings/Documents/garden-plaza/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

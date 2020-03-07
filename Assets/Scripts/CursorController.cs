@@ -33,6 +33,7 @@ public class CursorController : MonoBehaviour
     private GameObject profOBJ;
     private GameObject lifeArrow;
     private GameObject waterArrow;
+    private Text sellText;
     private Text itemNick;
     private Text candyText;
     private Text itemType;
@@ -59,12 +60,14 @@ public class CursorController : MonoBehaviour
         waterArrow = GameObject.Find("waterArrow");
 
         //Text and UI
+        sellText = GameObject.Find("sellText").GetComponent<Text>();
         itemNick = GameObject.Find("itemName").GetComponent<Text>();
         itemType = GameObject.Find("itemType").GetComponent<Text>();
         ageText = GameObject.Find("ageText").GetComponent<Text>();
         candyText = GameObject.Find("Candy Text").GetComponent<Text>();
 
         //Disable UI
+        sellText.gameObject.SetActive(false);
         profOBJ.SetActive(false);
         inputF.SetActive(false);
         waterObj.SetActive(false);
@@ -101,44 +104,53 @@ public class CursorController : MonoBehaviour
                 shovelObj.SetActive(true);
             }
         }
-        //Input w/Tool
-        if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && currentCol == null && InGarden)
-        {
-            if (GM.candyCount >= 250)
+        //Input w/Tool if PLANT
+            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden)
             {
-                shovelDig["Shovel_Dig"].wrapMode = WrapMode.Once;
-                shovelDig.Play("Shovel_Dig");
-                GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x,0,transform.GetChild(0).position.z), Quaternion.identity);
-                justIn.GetComponent<Plant>().pNick = "Rose (" + plantCounter + ")";
-                plantCounter++;
-                GM.addPlant(justIn);
-                StartCoroutine(UpdateCandy(GM.candyCount, 250));
-                GM.candyCount -= 250;
-                candyText.text = GM.candyCount.ToString("N0");
+                if (GM.candyCount >= 250)
+                {
+                    shovelDig["Shovel_Dig"].wrapMode = WrapMode.Once;
+                    shovelDig.Play("Shovel_Dig");
+                    GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, 0, transform.GetChild(0).position.z), Quaternion.identity);
+                    justIn.GetComponent<Plant>().pNick = "Rose (" + plantCounter + ")";
+                    plantCounter++;
+                    GM.addPlant(justIn);
+                    StartCoroutine(UpdateCandy(GM.candyCount, 250));
+                    GM.candyCount -= 250;
+                    candyText.text = GM.candyCount.ToString("N0");
+                }
             }
+            else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Plant")
+            {
+                profOBJ.SetActive(true);
+                UIVisible = true;
+                selectedObj = currentCol.gameObject;
+                ageText.text = selectedObj.GetComponent<Plant>().getAge();
+                itemNick.text = selectedObj.GetComponent<Plant>().pNick;
+                itemType.text = selectedObj.GetComponent<Plant>().pName;
+            }
+            else if (Input.GetButton("A") && toolList[curTool] == "Watering Can" && currentCol != null && currentCol.tag == "Plant")
+            {
+                canWater["Can_Pour"].wrapMode = WrapMode.Once;
+                canWater.Play("Can_Pour");
+                profOBJ.SetActive(true);
+                UIVisible = true;
+                selectedObj = currentCol.gameObject;
+                ageText.text = selectedObj.GetComponent<Plant>().getAge();
+                itemNick.text = selectedObj.GetComponent<Plant>().pNick;
+                itemType.text = selectedObj.GetComponent<Plant>().pName;
+                //WATER CODE
+                selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
+            }
+            else if(Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Pickup")
+            {
+                Pickup PS = currentCol.GetComponent<Pickup>();
+                Destroy(currentCol.gameObject);
+                StartCoroutine(UpdateCandy(GM.candyCount, -PS.candyValue));
+                GM.candyCount += PS.candyValue;
+                candyText.text = GM.candyCount.ToString("N0");
         }
-        else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null)
-        {
-            profOBJ.SetActive(true);
-            UIVisible = true;
-            selectedObj = currentCol.gameObject;
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-            itemType.text = selectedObj.GetComponent<Plant>().pName;
-        }
-        else if (Input.GetButton("A") && toolList[curTool] == "Watering Can" && currentCol != null)
-        {
-            canWater["Can_Pour"].wrapMode = WrapMode.Once;
-            canWater.Play("Can_Pour");
-            profOBJ.SetActive(true);
-            UIVisible = true;
-            selectedObj = currentCol.gameObject;
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-            itemType.text = selectedObj.GetComponent<Plant>().pName;
-            //WATER CODE
-            selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
-        }
+        
 
         //Update UI
         if (UIVisible)
@@ -157,6 +169,14 @@ public class CursorController : MonoBehaviour
             //Debug.Log("Entered: " +collision.gameObject.name);
             currentCol = collision;
         }
+        else if (collision.gameObject.tag == "Pickup")
+        {
+            currentCol = collision;
+            Pickup PS = currentCol.GetComponent<Pickup>();
+            sellText.gameObject.SetActive(true);
+            sellText.text = "Sell for " + PS.candyValue + " candy (Press A)";
+            currentCol = collision;
+        }
         else if (collision.gameObject.name == "GardenObject")
         {
             InGarden = true;
@@ -168,6 +188,11 @@ public class CursorController : MonoBehaviour
         if (collision.gameObject.tag == "Plant")
         {
             //Debug.Log("Exited: " +collision.gameObject.name);
+            currentCol = null;
+        }
+        else if (collision.gameObject.tag == "Pickup")
+        {
+            sellText.gameObject.SetActive(false);
             currentCol = null;
         }
         else if (collision.gameObject.name == "GardenObject")
