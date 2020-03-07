@@ -207,12 +207,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pName: Rose
   pNick: 
-  pType: Flower
+  pType: Rose
   pHealth: 100
   waterLevel: 100
   thirstStrength: 0.5
   startTime: 0
-  endTime: 15
+  endTime: 300
   rewardToSpawn: {fileID: 2381556311610715935, guid: c88814fc576859441b481906058b6e5f,
     type: 3}
 --- !u!65 &7915351818744230407

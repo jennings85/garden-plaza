@@ -18,7 +18,6 @@ public class Plant : MonoBehaviour
     //Plant Life Info
     public float startTime;
     public float endTime;
-    private float currentTime;
     private List<GameObject> Children = new List<GameObject>();
     public GameObject rewardToSpawn;
 
@@ -57,11 +56,21 @@ public class Plant : MonoBehaviour
 
     public string getAge()
     {
-        return ((Time.time - startTime)/60).ToString("F1") + "  mins";
+        return ((Time.time - startTime) / 60).ToString("F1") + "  mins";
+    }
+    public float getGrowth()
+    {
+        return Mathf.Lerp(0, 1, (endTime - Time.time) / (endTime - startTime));
     }
 
     public float getLifeLerp()
     {
         return Mathf.Lerp(0, 1, (endTime - Time.time) / (endTime - startTime));
+    }
+
+    public void Killed()
+    {
+        CC.InformedDeath(gameObject);
+        Destroy(gameObject);
     }
 }

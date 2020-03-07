@@ -37,9 +37,15 @@ public class GardenManager : MonoBehaviour
         candyTxt = GameObject.Find("Candy Text").GetComponent<Text>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public GameObject CheckInGarden(string item)
     {
-        
+        foreach(GameObject g in curPlants)
+        {
+            if(g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= .97f) //Plant exists and is mature
+            {
+                return g;
+            }
+        }
+        return null;
     }
 }
