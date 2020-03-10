@@ -38,16 +38,21 @@ public class GardenManager : MonoBehaviour
         candyTxt = GameObject.Find("Candy Text").GetComponent<Text>();
     }
 
-    public GameObject CheckInGarden(string item)
+    public GameObject CheckInGarden(string item, GameObject Pinata)
     {
+        GameObject returner = null;
+        float closest = 999f;
         foreach(GameObject g in curPlants)
         {
             if(g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
             {
-                return g;
+                if(Vector3.Distance(Pinata.transform.position, g.transform.position) < closest)
+                {
+                    returner = g;
+                }
             }
         }
-        return null;
+        return returner;
     }
 
     public int HowManyInGarden(string item)
@@ -55,7 +60,7 @@ public class GardenManager : MonoBehaviour
         int count = 0;
         foreach (GameObject g in curPlants)
         {
-            if (g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
+            if (g != null && g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
             {
                 count++;
             }

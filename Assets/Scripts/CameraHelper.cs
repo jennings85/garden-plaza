@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraHelper : MonoBehaviour
 {
     public int speed;
+    public GameObject tool;
     void Update()
     {
         float h = speed * Input.GetAxis("axisName") * Time.deltaTime;

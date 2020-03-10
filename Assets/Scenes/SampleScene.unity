@@ -589,7 +589,7 @@ ParticleSystemRenderer:
   m_ApplyActiveColorSpace: 1
   m_AllowRoll: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -602,7 +602,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206814210}
   serializedVersion: 6
-  lengthInSec: 5
+  lengthInSec: 1
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -613,7 +613,7 @@ ParticleSystem:
   playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
-  useRigidbodyForVelocity: 1
+  useRigidbodyForVelocity: 0
   startDelay:
     serializedVersion: 2
     minMaxState: 0
@@ -730,7 +730,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2.64
+      scalar: 3
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -846,7 +846,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.69
+      scalar: 0.4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1168,7 +1168,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2.48
+      scalar: 1.84
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1427,7 +1427,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 35.67
+      scalar: 40
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -6323,8 +6323,8 @@ MonoBehaviour:
   shovImg: {fileID: 21300000, guid: 6919b93b82e7963419be5e2a1f1f9825, type: 3}
   magImg: {fileID: 21300000, guid: f81f6f417d1ceac4cbae7776dda2eacc, type: 3}
   waterImg: {fileID: 21300000, guid: 7c98725ac4a536447919d1c749ad091e, type: 3}
-  rose: {fileID: 6008158703799771585, guid: 54b4f635a5506764fae6549a6e451f77, type: 3}
-  bluebell: {fileID: 6008158703799771585, guid: ebe1b1749227f6f4aa4d400c847d645f,
+  rose: {fileID: 8351022477909797213, guid: 21b562f92f053274486c7f8e242c182b, type: 3}
+  bluebell: {fileID: 8351022477909797213, guid: 0fe52726c65828a48911b92d1212cb08,
     type: 3}
 --- !u!54 &740233012
 Rigidbody:
@@ -7034,6 +7034,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
+  tool: {fileID: 149321112}
 --- !u!1 &1160945020 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 8b5387ddd3c86cf43b3cba3044a981a7,
@@ -7320,7 +7321,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   candyCount: 2500
   curPlants: []
-  growthNeeded: 0.76
+  growthNeeded: 0.99
 --- !u!1 &1278482630
 GameObject:
   m_ObjectHideFlags: 0
@@ -10213,12 +10214,22 @@ PrefabInstance:
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[2]
-      value: V,GROW,3,Bluebell
+      value: V,GROW,1,Bluebell
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[3]
-      value: R,EAT,3,Bluebell
+      value: R,EAT,1,Bluebell
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
+      propertyPath: rawReq.Array.data[0]
+      value: R,EAT,1,Rose
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
+      propertyPath: rawReq.Array.data[1]
+      value: V,GROW,1,Rose
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 692157f0f1fbfa04aba45ec74018612a, type: 3}

@@ -11,7 +11,8 @@ public class Plant : MonoBehaviour
     public string pName;
     public string pNick;
     public string pType;
-    public int pHealth = 100;
+    public int price;
+    public int growthStages;
     //0 -dead AF, 25 - almost dead, 50 low, 75 fine, 100 perfect, 125 fine, 150, too much, 175 almost dead, 200 dead
     public float waterLevel = 100;
     public float thirstStrength;
@@ -40,7 +41,7 @@ public class Plant : MonoBehaviour
         if(!(Time.time > endTime))
         {
             float growth = Mathf.Lerp(0, 1, (endTime - Time.time) / (endTime - startTime));
-            int stage = (int)Mathf.Floor(growth * 3);
+            int stage = (int)Mathf.Floor(growth * growthStages);
             Children[stage].SetActive(true);
             if(waterLevel < 0.0f || waterLevel > 200.0f)
             {

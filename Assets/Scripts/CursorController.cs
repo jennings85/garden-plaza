@@ -124,19 +124,24 @@ public class CursorController : MonoBehaviour
                 shovelObj.SetActive(true);
             }
         }
-        //Input w/Tool if PLANT
-            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden)
+            //Input w/Tool if PLANT
+            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden  && !shovelDig.IsPlaying("Shovel_Dig") && currentCol == null)
             {
                 if (GM.candyCount >= 250)
                 {
                     shovelDig["Shovel_Dig"].wrapMode = WrapMode.Once;
                     shovelDig.Play("Shovel_Dig");
+
+                    var euler = transform.eulerAngles;
+                    euler.y = Random.Range(0.0f, 360.0f);
                     GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, 0, transform.GetChild(0).position.z), Quaternion.identity);
+                    justIn.transform.Rotate(euler);
                     justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
+                    int price = justIn.GetComponent<Plant>().price;
                     plantCounter++;
                     GM.addPlant(justIn);
-                    StartCoroutine(UpdateCandy(GM.candyCount, 250));
-                    GM.candyCount -= 250;
+                    StartCoroutine(UpdateCandy(GM.candyCount, price));
+                    GM.candyCount -= price;
                     candyText.text = GM.candyCount.ToString("N0");
                 }
             }
@@ -187,7 +192,7 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
-            //Debug.Log("Entered: " +collision.gameObject.name);
+            Debug.Log("Entered: " +collision.gameObject.name);
             currentCol = collision;
         }
         else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
@@ -220,6 +225,15 @@ public class CursorController : MonoBehaviour
         {
             InGarden = false;
             StartCoroutine(LeftGarden());
+        }
+    }
+
+    private void OnTriggerStay(Collider collision)
+    {
+        if (collision.gameObject.tag == "Plant")
+        {
+            Debug.Log("Still in a: " + collision.gameObject.name);
+            currentCol = collision;
         }
     }
 

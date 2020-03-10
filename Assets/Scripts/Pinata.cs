@@ -25,6 +25,7 @@ public class Pinata : MonoBehaviour
     public bool ableToVisit;
     public bool resident;
     public bool inGarden;
+    public bool inMotionAlready = false;
     public List<string> rawReq;
     public List<Requirement> vRequirements = new List<Requirement>();
     public List<Requirement> rRequirements = new List<Requirement>();
@@ -87,6 +88,8 @@ public class Pinata : MonoBehaviour
             else //Can visit, not resident yet
             {
                 bool _makeComplete = true;
+                plantmoveto = null;
+                inMotionAlready = false;
                 foreach (Requirement rReq in rRequirements) 
                 {
                     if (!rReq.complete) //rReq not filled
@@ -94,9 +97,10 @@ public class Pinata : MonoBehaviour
                         _makeComplete = false;
                         if(rReq.task == "EAT" && rReq.count != 0)
                         {
-                            if(plantmoveto == null)
+                            if(plantmoveto == null && !inMotionAlready)
                             {
-                                plantmoveto = GM.CheckInGarden(rReq.item);
+                                plantmoveto = GM.CheckInGarden(rReq.item, gameObject);
+                                inMotionAlready = true;
                             }
                             if (plantmoveto != null && !rReq.complete)
                             {
@@ -107,8 +111,10 @@ public class Pinata : MonoBehaviour
                                 }
                                 else
                                 {
+                                    Debug.Log("ATE:" + plantmoveto.name);
                                     plantmoveto.GetComponent<Plant>().Killed();
                                     plantmoveto = null;
+                                    inMotionAlready = false;
                                     rReq.count -= 1;
                                 }
                             }
@@ -116,6 +122,8 @@ public class Pinata : MonoBehaviour
                         else if(rReq.task == "EAT" && rReq.count == 0)
                         {
                             rReq.complete = true;
+                            Debug.Log("COMPLETED: " + rReq.task + " " + rReq.item);
+
                         }
 
                     }
