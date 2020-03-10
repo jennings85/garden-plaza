@@ -125,7 +125,7 @@ public class CursorController : MonoBehaviour
             }
         }
             //Input w/Tool if PLANT
-            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden  && !shovelDig.IsPlaying("Shovel_Dig") && currentCol == null)
+            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden && currentCol == null) // && !shovelDig.IsPlaying("Shovel_Dig") 
             {
                 if (GM.candyCount >= 250)
                 {
@@ -192,7 +192,7 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
-            Debug.Log("Entered: " +collision.gameObject.name);
+            //Debug.Log("Entered: " +collision.gameObject.name);
             currentCol = collision;
         }
         else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
@@ -232,7 +232,6 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
-            Debug.Log("Still in a: " + collision.gameObject.name);
             currentCol = collision;
         }
     }
@@ -262,10 +261,10 @@ public class CursorController : MonoBehaviour
 
         //now we can apply the movement:
         transform.GetChild(0).Rotate(new Vector3(0, 100*Time.deltaTime, 0));
-        if (!shovelDig.IsPlaying("Shovel_Dig"))
-        {
+        //if (!shovelDig.IsPlaying("Shovel_Dig"))
+        //{
             transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
-        }
+        //}
     }
     public IEnumerator LeftGarden()
     {

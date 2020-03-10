@@ -10214,22 +10214,22 @@ PrefabInstance:
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[2]
-      value: V,GROW,1,Bluebell
+      value: V,GROW,4,Bluebell
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[3]
-      value: R,EAT,1,Bluebell
+      value: R,EAT,4,Bluebell
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[0]
-      value: R,EAT,1,Rose
+      value: R,EAT,4,Rose
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[1]
-      value: V,GROW,1,Rose
+      value: V,GROW,4,Rose
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 692157f0f1fbfa04aba45ec74018612a, type: 3}

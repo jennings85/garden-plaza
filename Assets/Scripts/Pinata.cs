@@ -35,6 +35,7 @@ public class Pinata : MonoBehaviour
 
     private GardenManager GM;
     private GameObject plantmoveto;
+    private Requirement curReq = null;
 
     void Start()
     {
@@ -61,14 +62,14 @@ public class Pinata : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(!resident)
+        if (!resident)
         {
-            if(!ableToVisit)
+            if (!ableToVisit)
             {
                 bool _makeComplete = true;
                 foreach (Requirement vReq in vRequirements) //Go through all Visit Requirements to check if they're in garden
                 {
-                    if(vReq.task == "GROW")
+                    if (vReq.task == "GROW")
                     {
                         if (GM.HowManyInGarden(vReq.item) < vReq.count) //Not enough of required item in garden
                         {
@@ -80,62 +81,63 @@ public class Pinata : MonoBehaviour
                         }
                     }
                 }
-                if(_makeComplete) //Nothing WASNT in garden, make pinata visit allowed
+                if (_makeComplete) //Nothing WASNT in garden, make pinata visit allowed
                 {
                     ableToVisit = true;
                 }
             }
             else //Can visit, not resident yet
             {
-                bool _makeComplete = true;
-                plantmoveto = null;
-                inMotionAlready = false;
-                foreach (Requirement rReq in rRequirements) 
+                if (curReq == null) //no requirement yet
                 {
-                    if (!rReq.complete) //rReq not filled
+                    foreach (Requirement r in rRequirements) //go through all
                     {
-                        _makeComplete = false;
-                        if(rReq.task == "EAT" && rReq.count != 0)
+                        if (r.task == "EAT" && GM.CheckInGarden(r.item, gameObject) && r.count > 0) //able to complete
                         {
-                            if(plantmoveto == null && !inMotionAlready)
-                            {
-                                plantmoveto = GM.CheckInGarden(rReq.item, gameObject);
-                                inMotionAlready = true;
-                            }
-                            if (plantmoveto != null && !rReq.complete)
-                            {
-                                if (Vector3.Distance(transform.position, plantmoveto.transform.position) > 2.0f)
-                                {
-                                    float step = 5 * Time.deltaTime; // calculate distance to move
-                                    transform.position = Vector3.MoveTowards(transform.position, plantmoveto.transform.position, step);
-                                }
-                                else
-                                {
-                                    Debug.Log("ATE:" + plantmoveto.name);
-                                    plantmoveto.GetComponent<Plant>().Killed();
-                                    plantmoveto = null;
-                                    inMotionAlready = false;
-                                    rReq.count -= 1;
-                                }
-                            }
+                            curReq = r;
+                            inMotionAlready = false;
                         }
-                        else if(rReq.task == "EAT" && rReq.count == 0)
-                        {
-                            rReq.complete = true;
-                            Debug.Log("COMPLETED: " + rReq.task + " " + rReq.item);
-
-                        }
-
                     }
                 }
-                if (_makeComplete) //All resident reqs done, become res!
+                if (curReq != null && !inMotionAlready && plantmoveto == null)
+                {
+                    plantmoveto = GM.CheckInGarden(curReq.item, gameObject);
+                    inMotionAlready = true;
+                }
+                if (plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) > 0.7f)
+                {
+                    float step = 5 * Time.deltaTime; // calculate distance to move
+                    transform.position = Vector3.MoveTowards(transform.position, plantmoveto.transform.position, step);
+                }
+                else if(plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) < 0.7f)
+                {
+                    Debug.Log("ATE:" + plantmoveto.name);
+                    Debug.Log(curReq.count);
+                    plantmoveto.GetComponent<Plant>().Killed();
+                    plantmoveto = null;
+                    inMotionAlready = false;
+                    curReq.count -= 1;
+                    if (curReq.count == 0)
+                    {
+                        curReq.complete = true;
+                        inMotionAlready = false;
+                        curReq = null;
+                    }
+                }
+                var allGood = true;
+                foreach(Requirement r in rRequirements)
+                {
+                    if(!r.complete)
+                    {
+                        allGood = false;
+                    }
+                }
+                if(allGood)
                 {
                     StartCoroutine(BecomeResident());
                     resident = true;
                 }
             }
-
-            
         }
     }
 
