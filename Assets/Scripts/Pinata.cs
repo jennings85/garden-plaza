@@ -9,6 +9,7 @@ public class Requirement
     public string visRes;
     public int count;
     public bool complete;
+
     public Requirement(string vr, string t, string i, int c)
     {
         visRes = vr;
@@ -32,6 +33,7 @@ public class Pinata : MonoBehaviour
     public Color REDCOLOR;
 
     private GardenManager GM;
+    private GameObject plantmoveto;
 
     void Start()
     {
@@ -56,7 +58,7 @@ public class Pinata : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(!resident)
         {
@@ -92,7 +94,10 @@ public class Pinata : MonoBehaviour
                         _makeComplete = false;
                         if(rReq.task == "EAT" && rReq.count != 0)
                         {
-                            GameObject plantmoveto = GM.CheckInGarden(rReq.item);
+                            if(plantmoveto == null)
+                            {
+                                plantmoveto = GM.CheckInGarden(rReq.item);
+                            }
                             if (plantmoveto != null && !rReq.complete)
                             {
                                 if (Vector3.Distance(transform.position, plantmoveto.transform.position) > 2.0f)

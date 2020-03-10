@@ -6286,7 +6286,7 @@ Transform:
   - {fileID: 972071315}
   - {fileID: 1398452277}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &740233010
 CapsuleCollider:
@@ -6323,7 +6323,8 @@ MonoBehaviour:
   shovImg: {fileID: 21300000, guid: 6919b93b82e7963419be5e2a1f1f9825, type: 3}
   magImg: {fileID: 21300000, guid: f81f6f417d1ceac4cbae7776dda2eacc, type: 3}
   waterImg: {fileID: 21300000, guid: 7c98725ac4a536447919d1c749ad091e, type: 3}
-  plantToSpawn: {fileID: 6008158703799771585, guid: 54b4f635a5506764fae6549a6e451f77,
+  rose: {fileID: 6008158703799771585, guid: 54b4f635a5506764fae6549a6e451f77, type: 3}
+  bluebell: {fileID: 6008158703799771585, guid: ebe1b1749227f6f4aa4d400c847d645f,
     type: 3}
 --- !u!54 &740233012
 Rigidbody:
@@ -7319,7 +7320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   candyCount: 2500
   curPlants: []
-  growthNeeded: 99
+  growthNeeded: 0.76
 --- !u!1 &1278482630
 GameObject:
   m_ObjectHideFlags: 0
@@ -9673,8 +9674,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 4.18495, z: 1}
-  m_Center: {x: 0, y: 1.5924749, z: 0}
+  m_Size: {x: 1, y: 0, z: 1}
+  m_Center: {x: 0, y: 13.889399, z: 0}
 --- !u!114 &2046067574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10187,7 +10188,7 @@ PrefabInstance:
     - target: {fileID: 5168339540488014665, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014665, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
@@ -10207,52 +10208,17 @@ PrefabInstance:
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: GREYCOLOR.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: GREYCOLOR.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: GREYCOLOR.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: REDCOLOR.r
-      value: 0.8018868
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: REDCOLOR.g
-      value: 0.35722345
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: REDCOLOR.b
-      value: 0.2912513
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
       propertyPath: rawReq.Array.data[2]
-      value: R,EAT,1,Rose
+      value: V,GROW,3,Bluebell
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
-      propertyPath: rawReq.Array.data[0]
-      value: R,EAT,8,Rose
-      objectReference: {fileID: 0}
-    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
-        type: 3}
-      propertyPath: rawReq.Array.data[1]
-      value: V,GROW,8,Rose
+      propertyPath: rawReq.Array.data[3]
+      value: R,EAT,3,Bluebell
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 692157f0f1fbfa04aba45ec74018612a, type: 3}

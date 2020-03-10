@@ -21,6 +21,7 @@ public class CursorController : MonoBehaviour
     private int plantCounter = 0;
     private GameObject shovelObj;
     private GameObject waterObj;
+    private bool testVar = true;
 
     public Animation shovelDig;
     public Animation canWater;
@@ -41,7 +42,11 @@ public class CursorController : MonoBehaviour
     private GameObject inputF;
     private bool UIVisible = false;
 
-    public GameObject plantToSpawn;
+    //Plants
+    public GameObject rose;
+    public GameObject bluebell;
+
+    private GameObject plantToSpawn;
     private GameObject selectedObj;
     private Collider currentCol;
 
@@ -49,6 +54,7 @@ public class CursorController : MonoBehaviour
 
     void Start()
     {
+        plantToSpawn = rose;
         shovelObj = GameObject.Find("Shovel");
         waterObj = GameObject.Find("Can");
         profOBJ = GameObject.Find("profObjBack");
@@ -76,9 +82,23 @@ public class CursorController : MonoBehaviour
     void Update()
     {
 
+        //Change Plant Testing
+        if (Input.GetButtonDown("Y"))
+        {
+            if(testVar)
+            {
+                plantToSpawn = bluebell;
+                testVar = false;
+            }
+            else
+            {
+                plantToSpawn = rose;
+                testVar = true;
+            }
+        }
 
         //Change Tool
-        if (Input.GetButtonDown("X") && !shovelDig.IsPlaying("Shovel_Dig") && !canWater.IsPlaying("Can_Pour"))
+            if (Input.GetButtonDown("X") && !shovelDig.IsPlaying("Shovel_Dig") && !canWater.IsPlaying("Can_Pour"))
         {
             if(curTool == 0) //SET TO WATER
             {
@@ -112,7 +132,7 @@ public class CursorController : MonoBehaviour
                     shovelDig["Shovel_Dig"].wrapMode = WrapMode.Once;
                     shovelDig.Play("Shovel_Dig");
                     GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, 0, transform.GetChild(0).position.z), Quaternion.identity);
-                    justIn.GetComponent<Plant>().pNick = "Rose (" + plantCounter + ")";
+                    justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
                     plantCounter++;
                     GM.addPlant(justIn);
                     StartCoroutine(UpdateCandy(GM.candyCount, 250));
