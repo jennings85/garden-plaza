@@ -6319,7 +6319,7 @@ MonoBehaviour:
   speed: 10
   shovelDig: {fileID: 149321114}
   canWater: {fileID: 1160945022}
-  waterStrength: 12
+  waterStrength: 18
   shovImg: {fileID: 21300000, guid: 6919b93b82e7963419be5e2a1f1f9825, type: 3}
   magImg: {fileID: 21300000, guid: f81f6f417d1ceac4cbae7776dda2eacc, type: 3}
   waterImg: {fileID: 21300000, guid: 7c98725ac4a536447919d1c749ad091e, type: 3}
@@ -7319,6 +7319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   candyCount: 2500
   curPlants: []
+  growthNeeded: 99
 --- !u!1 &1278482630
 GameObject:
   m_ObjectHideFlags: 0
@@ -10205,6 +10206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
         type: 3}
+      propertyPath: rawReq.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
       propertyPath: GREYCOLOR.r
       value: 1
       objectReference: {fileID: 0}
@@ -10232,6 +10238,21 @@ PrefabInstance:
         type: 3}
       propertyPath: REDCOLOR.b
       value: 0.2912513
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
+      propertyPath: rawReq.Array.data[2]
+      value: R,EAT,1,Rose
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
+      propertyPath: rawReq.Array.data[0]
+      value: R,EAT,8,Rose
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168339540488014669, guid: 692157f0f1fbfa04aba45ec74018612a,
+        type: 3}
+      propertyPath: rawReq.Array.data[1]
+      value: V,GROW,8,Rose
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 692157f0f1fbfa04aba45ec74018612a, type: 3}

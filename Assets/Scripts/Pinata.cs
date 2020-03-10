@@ -21,6 +21,7 @@ public class Requirement
 public class Pinata : MonoBehaviour
 {
     public string breed;
+    public bool ableToVisit;
     public bool resident;
     public bool inGarden;
     public List<string> rawReq;
@@ -57,27 +58,71 @@ public class Pinata : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!inGarden)
+        if(!resident)
         {
-            if(!resident)
+            if(!ableToVisit)
             {
-                GameObject plantMoveTo = GM.CheckInGarden(vRequirements[0].item);
-                if (plantMoveTo != null && !rRequirements[0].complete)
+                bool _makeComplete = true;
+                foreach (Requirement vReq in vRequirements) //Go through all Visit Requirements to check if they're in garden
                 {
-                    if (Vector3.Distance(transform.position, plantMoveTo.transform.position) > 2.0f)
+                    if(vReq.task == "GROW")
                     {
-                        float step = 5 * Time.deltaTime; // calculate distance to move
-                        transform.position = Vector3.MoveTowards(transform.position, plantMoveTo.transform.position, step);
-                    }
-                    else
-                    {
-                        plantMoveTo.GetComponent<Plant>().Killed();
-                        rRequirements[0].complete = true;
-                        resident = true;
-                        StartCoroutine(BecomeResident());
+                        if (GM.HowManyInGarden(vReq.item) < vReq.count) //Not enough of required item in garden
+                        {
+                            _makeComplete = false;
+                        }
+                        else
+                        {
+                            vReq.complete = true;
+                        }
                     }
                 }
+                if(_makeComplete) //Nothing WASNT in garden, make pinata visit allowed
+                {
+                    ableToVisit = true;
+                }
             }
+            else //Can visit, not resident yet
+            {
+                bool _makeComplete = true;
+                foreach (Requirement rReq in rRequirements) 
+                {
+                    if (!rReq.complete) //rReq not filled
+                    {
+                        _makeComplete = false;
+                        if(rReq.task == "EAT" && rReq.count != 0)
+                        {
+                            GameObject plantmoveto = GM.CheckInGarden(rReq.item);
+                            if (plantmoveto != null && !rReq.complete)
+                            {
+                                if (Vector3.Distance(transform.position, plantmoveto.transform.position) > 2.0f)
+                                {
+                                    float step = 5 * Time.deltaTime; // calculate distance to move
+                                    transform.position = Vector3.MoveTowards(transform.position, plantmoveto.transform.position, step);
+                                }
+                                else
+                                {
+                                    plantmoveto.GetComponent<Plant>().Killed();
+                                    plantmoveto = null;
+                                    rReq.count -= 1;
+                                }
+                            }
+                        }
+                        else if(rReq.task == "EAT" && rReq.count == 0)
+                        {
+                            rReq.complete = true;
+                        }
+
+                    }
+                }
+                if (_makeComplete) //All resident reqs done, become res!
+                {
+                    StartCoroutine(BecomeResident());
+                    resident = true;
+                }
+            }
+
+            
         }
     }
 

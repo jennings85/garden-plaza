@@ -10,6 +10,7 @@ public class GardenManager : MonoBehaviour
     //public GameObject[] curPins;
     public int candyCount;
     public List<GameObject> curPlants;
+    public float growthNeeded;
 
     private Text candyTxt;
 
@@ -41,11 +42,29 @@ public class GardenManager : MonoBehaviour
     {
         foreach(GameObject g in curPlants)
         {
-            if(g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= .97f) //Plant exists and is mature
+            if(g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
             {
                 return g;
             }
         }
         return null;
+    }
+
+    public int HowManyInGarden(string item)
+    {
+        int count = 0;
+        foreach (GameObject g in curPlants)
+        {
+            if (g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void KillPlant(GameObject died)
+    {
+        curPlants.Remove(died);
     }
 }

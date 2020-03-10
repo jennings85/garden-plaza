@@ -6,6 +6,7 @@ public class Plant : MonoBehaviour
 {
     //Controller
     private CursorController CC;
+    private GardenManager GM;
 
     public string pName;
     public string pNick;
@@ -24,6 +25,7 @@ public class Plant : MonoBehaviour
     private void Start()
     {
         CC = GameObject.Find("Cursor Object").GetComponent<CursorController>();
+        GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
         startTime = Time.time;
         endTime += Time.time;
         foreach (Transform child in transform)
@@ -70,6 +72,7 @@ public class Plant : MonoBehaviour
 
     public void Killed()
     {
+        GM.KillPlant(gameObject);
         CC.InformedDeath(gameObject);
         Destroy(gameObject);
     }

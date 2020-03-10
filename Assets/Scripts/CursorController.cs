@@ -149,8 +149,9 @@ public class CursorController : MonoBehaviour
                 StartCoroutine(UpdateCandy(GM.candyCount, -PS.candyValue));
                 GM.candyCount += PS.candyValue;
                 candyText.text = GM.candyCount.ToString("N0");
+                sellText.gameObject.SetActive(false);
         }
-        
+
 
         //Update UI
         if (UIVisible)
@@ -169,7 +170,7 @@ public class CursorController : MonoBehaviour
             //Debug.Log("Entered: " +collision.gameObject.name);
             currentCol = collision;
         }
-        else if (collision.gameObject.tag == "Pickup")
+        else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
         {
             currentCol = collision;
             Pickup PS = currentCol.GetComponent<Pickup>();
@@ -190,7 +191,7 @@ public class CursorController : MonoBehaviour
             //Debug.Log("Exited: " +collision.gameObject.name);
             currentCol = null;
         }
-        else if (collision.gameObject.tag == "Pickup")
+        else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
         {
             sellText.gameObject.SetActive(false);
             currentCol = null;
