@@ -62,7 +62,7 @@ public class CursorController : MonoBehaviour
     private Collider currentCol;
 
     //Terrain
-    public Texture2D curTexture;
+    private string curTexture;
     public Terrain tur;
     public int tPosX;
     public int tPosZ;
@@ -71,6 +71,7 @@ public class CursorController : MonoBehaviour
 
     void Start()
     {
+        curTexture = "Grass";
         topRightImg = GameObject.Find("Selector Image").GetComponent<Image>();
         aText = GameObject.Find("A_TEXT").GetComponent<Text>();
         bText = GameObject.Find("B_TEXT").GetComponent<Text>();
@@ -109,18 +110,19 @@ public class CursorController : MonoBehaviour
     void Update()
     {
         //Change Plant Testing
-        if (Input.GetButtonDown("Y"))
+        if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
         {
-            tur.terrainData.SetAlphamaps(0, 0, originalTerrain);
             if (testVar)
             {
                 plantToSpawn = bluebell;
                 testVar = false;
+                debugText.text = "Bluebell";
             }
             else
             {
                 plantToSpawn = rose;
                 testVar = true;
+                debugText.text = "Rose";
             }
         }
 
@@ -171,6 +173,24 @@ public class CursorController : MonoBehaviour
         if (Input.GetButton("A") && toolList[curTool] == "Surface Packet" && InGarden)
         {
             DrawTexture(curTexture);
+        }
+        if(Input.GetButtonDown("Y") && toolList[curTool] == "Surface Packet")
+        {
+            if(curTexture == "Grass")
+            {
+                curTexture = "Sand";
+                debugText.text = "Sand";
+            }
+            else if(curTexture == "Sand")
+            {
+                curTexture = "Dirt";
+                debugText.text = "Dirt";
+            }
+            else
+            {
+                curTexture = "Grass";
+                debugText.text = "Grass";
+            }
         }
 
         //Input w/Tool if PLANT
@@ -245,43 +265,65 @@ public class CursorController : MonoBehaviour
 
     }
 
-    void DrawTexture(Texture2D tx)
+    void DrawTexture(string tx)
     {
+        float sN;
+        float dI;
+        float gR;
+
+        if(tx == "Sand")
+        {
+            sN = 1;
+            dI = 0;
+            gR = 0;
+        }
+        else if(tx == "Dirt")
+        {
+            sN = 0;
+            dI = 1;
+            gR = 0;
+        }
+        else
+        {
+            sN = 0;
+            dI = 0;
+            gR = 1;
+        }
         Vector3 terrainPosition = transform.position - tur.transform.position;
         Vector3 mapPosition = new Vector3(terrainPosition.x / tur.terrainData.size.x, 0, terrainPosition.z / tur.terrainData.size.z);
         tPosX = (int)(mapPosition.x * tur.terrainData.alphamapWidth);
         tPosZ = (int)(mapPosition.z * tur.terrainData.alphamapHeight);
-        float[,,] map = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
-        map[tPosZ - 1, tPosX - 1, 2] = 0;
-        map[tPosZ - 1, tPosX, 2] = 0;
-        map[tPosZ - 1, tPosX + 1, 2] = 0;
-        map[tPosZ, tPosX - 1, 2] = 0;
-        map[tPosZ, tPosX, 2] = 0;
-        map[tPosZ, tPosX + 1, 2] = 0;
-        map[tPosZ + 1, tPosX - 1, 2] = 0;
-        map[tPosZ + 1, tPosX, 2] = 0;
-        map[tPosZ + 1, tPosX + 1, 2] = 0;
+        float[,,] map = tur.terrainData.GetAlphamaps(234, 234, 43, 42);
+        map[tPosZ - 234-1, tPosX - 234-1, 2] = dI;
+        map[tPosZ - 234-1, tPosX - 234,   2] = dI;
+        map[tPosZ - 234-1, tPosX - 234+1, 2] = dI;
+        map[tPosZ - 234, tPosX - 234-1,   2] = dI;
+        map[tPosZ - 234, tPosX - 234,     2] = dI;
+        map[tPosZ - 234, tPosX - 234+1,   2] = dI;
+        map[tPosZ - 234+1, tPosX - 234-1, 2] = dI;
+        map[tPosZ - 234+1, tPosX - 234,   2] = dI;
+        map[tPosZ - 234+1, tPosX - 234+1, 2] = dI;
 
-        map[tPosZ - 1, tPosX - 1, 0] = 0;
-        map[tPosZ - 1, tPosX, 0] = 0;
-        map[tPosZ - 1, tPosX + 1, 0] = 0;
-        map[tPosZ, tPosX - 1, 0] = 0;
-        map[tPosZ, tPosX, 0] = 0;
-        map[tPosZ, tPosX + 1, 0] = 0;
-        map[tPosZ + 1, tPosX - 1, 0] = 0;
-        map[tPosZ + 1, tPosX, 0] = 0;
-        map[tPosZ + 1, tPosX + 1, 0] = 0;
+        map[tPosZ - 234 - 1, tPosX - 234 - 1, 1] = sN;
+        map[tPosZ - 234 - 1, tPosX - 234,     1] = sN;
+        map[tPosZ - 234 - 1, tPosX - 234 + 1, 1] = sN;
+        map[tPosZ - 234, tPosX - 234 - 1,     1] = sN;
+        map[tPosZ - 234, tPosX - 234,         1] = sN;
+        map[tPosZ - 234, tPosX - 234 + 1,     1] = sN;
+        map[tPosZ - 234 + 1, tPosX - 234 - 1, 1] = sN;
+        map[tPosZ - 234 + 1, tPosX - 234,     1] = sN;
+        map[tPosZ - 234 + 1, tPosX - 234 + 1, 1] = sN;
 
-        map[tPosZ - 1, tPosX - 1, 1] = 1;
-        map[tPosZ - 1, tPosX, 1] = 1;
-        map[tPosZ - 1, tPosX + 1, 1] = 1;
-        map[tPosZ, tPosX - 1, 1] = 1;
-        map[tPosZ, tPosX, 1] = 1;
-        map[tPosZ, tPosX + 1, 1] = 1;
-        map[tPosZ + 1, tPosX - 1, 1] = 1;
-        map[tPosZ + 1, tPosX, 1] = 1;
-        map[tPosZ + 1, tPosX + 1, 1] = 1;
-        tur.terrainData.SetAlphamaps(0, 0, map);
+        map[tPosZ - 234 - 1, tPosX - 234 - 1, 0] = gR;
+        map[tPosZ - 234 - 1, tPosX - 234,     0] = gR;
+        map[tPosZ - 234- 1, tPosX - 234 + 1, 0] = gR;
+        map[tPosZ - 234, tPosX - 234 - 1,     0] = gR;
+        map[tPosZ - 234, tPosX - 234,         0] = gR;
+        map[tPosZ - 234, tPosX - 234 + 1,     0] = gR;
+        map[tPosZ - 234 + 1, tPosX - 234 - 1, 0] = gR;
+        map[tPosZ - 234 + 1, tPosX - 234,     0] = gR;
+        map[tPosZ - 234 + 1, tPosX - 234 + 1, 0] = gR;
+        tur.terrainData.SetAlphamaps(234, 234, map);
     }
 
     string TextureOnTopOf()
