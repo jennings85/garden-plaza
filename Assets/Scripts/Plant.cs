@@ -41,9 +41,13 @@ public class Plant : MonoBehaviour
         if(!(Time.time > endTime))
         {
             float growth = Mathf.Lerp(0, 1, (endTime - Time.time) / (endTime - startTime));
-            int stage = (int)Mathf.Floor(growth * growthStages);
-            Children[stage].SetActive(true);
-            if(waterLevel < 0.0f || waterLevel > 200.0f)
+            int stage = (int)Mathf.Floor(growth * growthStages); //x2 allows for longer life after flowering
+            //Debug.Log(growth + " - " + stage);
+            if (stage < growthStages)
+            {
+                Children[stage].SetActive(true);
+            }
+            if (waterLevel < 0.0f || waterLevel > 200.0f)
             {
                 CC.InformedDeath(gameObject);
                 Destroy(gameObject);

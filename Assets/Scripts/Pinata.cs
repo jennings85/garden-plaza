@@ -101,8 +101,11 @@ public class Pinata : MonoBehaviour
                 }
                 if (curReq != null && !inMotionAlready && plantmoveto == null)
                 {
-                    plantmoveto = GM.CheckInGarden(curReq.item, gameObject);
-                    inMotionAlready = true;
+                    if (GM.CheckInGarden(curReq.item, gameObject))
+                    {
+                        plantmoveto = GM.CheckInGarden(curReq.item, gameObject);
+                        inMotionAlready = true;
+                    }
                 }
                 if (plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) > 0.7f)
                 {

@@ -44,10 +44,11 @@ public class GardenManager : MonoBehaviour
         float closest = 999f;
         foreach(GameObject g in curPlants)
         {
-            if(g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
+            if(g != null && g.GetComponent<Plant>().pType == item && g.GetComponent<Plant>().getGrowth() <= growthNeeded) //Plant exists and is mature
             {
                 if(Vector3.Distance(Pinata.transform.position, g.transform.position) < closest)
                 {
+                    closest = Vector3.Distance(Pinata.transform.position, g.transform.position);
                     returner = g;
                 }
             }

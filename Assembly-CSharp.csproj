@@ -68,8 +68,12 @@
     <Compile Include="Assets\Scripts\Pickup.cs" />
     <Compile Include="Assets\Scripts\Pinata.cs" />
     <Compile Include="Assets\Scripts\Plant.cs" />
+    <None Include="Assets\Samples\Terrain Tools\0.1.0-preview\Terrain Assets\ThirdPartyNotices.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TerrainTools">
+      <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/Unity.TerrainTools.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
@@ -100,6 +104,9 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TerrainTools.Editor">
+      <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/Unity.TerrainTools.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>X:/Personal Projects/garden-plaza/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>

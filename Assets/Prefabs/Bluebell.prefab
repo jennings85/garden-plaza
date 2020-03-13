@@ -294,7 +294,7 @@ MonoBehaviour:
   waterLevel: 100
   thirstStrength: 0.85
   startTime: 0
-  endTime: 60
+  endTime: 30
   rewardToSpawn: {fileID: 2381556311610715935, guid: 3ca780bbda60b5d4d81c7d47e04293ee,
     type: 3}
 --- !u!65 &55494159449124955
