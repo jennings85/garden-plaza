@@ -6480,13 +6480,13 @@ MonoBehaviour:
   waterImg: {fileID: 21300000, guid: 7c98725ac4a536447919d1c749ad091e, type: 3}
   packet: {fileID: 21300000, guid: 05713cf0c9eddb646add13719543ec88, type: 3}
   debugText: {fileID: 884502048}
+  UIFlip: {fileID: 1678263646}
   fullTR: {fileID: 21300000, guid: 5d8bab789f2d4224b956df71e33a1c47, type: 3}
   noYTR: {fileID: 21300000, guid: 7e427edd69abc1941a75e80f0dd760ca, type: 3}
   noATR: {fileID: 21300000, guid: c4fb5c7f6b93b204bad764f9129daa6f, type: 3}
   rose: {fileID: 8351022477909797213, guid: 21b562f92f053274486c7f8e242c182b, type: 3}
   bluebell: {fileID: 8351022477909797213, guid: 0fe52726c65828a48911b92d1212cb08,
     type: 3}
-  curTexture: {fileID: 0}
   tur: {fileID: 19848253}
   tPosX: 0
   tPosZ: 0
@@ -8796,6 +8796,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1678263644}
+  - component: {fileID: 1678263645}
+  - component: {fileID: 1678263646}
   m_Layer: 8
   m_Name: TOP_RIGHT_UI_OBJ
   m_TagString: Untagged
@@ -8827,6 +8829,40 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
+--- !u!95 &1678263645
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678263643}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2788c313a1902f547aa930000f7011f0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!111 &1678263646
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678263643}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: b49cc83b1e26bee498505714a938a5c4, type: 2}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1704402980
 GameObject:
   m_ObjectHideFlags: 0

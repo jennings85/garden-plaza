@@ -42,6 +42,7 @@ public class CursorController : MonoBehaviour
     private GameObject inputF;
     private bool UIVisible = false;
     public Text debugText;
+    public Animation UIFlip;
 
 
     private Image topRightImg;
@@ -129,6 +130,8 @@ public class CursorController : MonoBehaviour
         //Change Tool
         if (Input.GetButtonDown("X") && !shovelDig.IsPlaying("Shovel_Dig"))//!canWater.IsPlaying("Can_Pour")
         {
+            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+            UIFlip.Play("UI_FLIP");
             if (curTool == 0) //SET TO WATER
             {
                 curTool++;
