@@ -127,8 +127,6 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
-        //if()
-
         //Change Plant Testing
         if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
         {
@@ -147,14 +145,13 @@ public class CursorController : MonoBehaviour
         }
 
         //Change Tool
-        if (Input.GetButtonDown("X"))//!canWater.IsPlaying("Can_Pour")
+        if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
         {
             UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
             UIFlip.Play("UI_FLIP");
             if (curTool == 0) //SET TO WATER
             {
                 shovelAnim.SetBool("IsSwitchingOut", true);
-                shovelAnim.SetBool("IsSwitchingIn", false);
                 canAnim.SetBool("IsSwitchingIn", true);
                 curTool++;
                 modeSprite.sprite = waterImg;
@@ -171,7 +168,6 @@ public class CursorController : MonoBehaviour
                 yText.text = "Alt. Surface";
 
                 canAnim.SetBool("IsSwitchingOut", true);
-                canAnim.SetBool("IsSwitchingIn", false);
                 packetAnim.SetBool("IsSwitchingIn", true);
 
             }
@@ -183,7 +179,6 @@ public class CursorController : MonoBehaviour
                 aText.text = "";
                 yText.text = "";
                 packetAnim.SetBool("IsSwitchingOut", true);
-                packetAnim.SetBool("IsSwitchingIn", false);
             }
             else
             {
@@ -194,7 +189,6 @@ public class CursorController : MonoBehaviour
                 yText.text = "Change Seed";
 
                 shovelAnim.SetBool("IsSwitchingIn", true);
-                packetAnim.SetBool("IsSwitchingOut", false);
 
             }
         }
