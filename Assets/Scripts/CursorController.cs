@@ -314,37 +314,38 @@ public class CursorController : MonoBehaviour
         Vector3 mapPosition = new Vector3(terrainPosition.x / tur.terrainData.size.x, 0, terrainPosition.z / tur.terrainData.size.z);
         tPosX = (int)(mapPosition.x * tur.terrainData.alphamapWidth);
         tPosZ = (int)(mapPosition.z * tur.terrainData.alphamapHeight);
-        float[,,] map = tur.terrainData.GetAlphamaps(234, 234, 43, 42);
-        map[tPosZ - 234-1, tPosX - 234-1, 2] = dI;
-        map[tPosZ - 234-1, tPosX - 234,   2] = dI;
-        map[tPosZ - 234-1, tPosX - 234+1, 2] = dI;
-        map[tPosZ - 234, tPosX - 234-1,   2] = dI;
-        map[tPosZ - 234, tPosX - 234,     2] = dI;
-        map[tPosZ - 234, tPosX - 234+1,   2] = dI;
-        map[tPosZ - 234+1, tPosX - 234-1, 2] = dI;
-        map[tPosZ - 234+1, tPosX - 234,   2] = dI;
-        map[tPosZ - 234+1, tPosX - 234+1, 2] = dI;
+        float[,,] map = tur.terrainData.GetAlphamaps(235, 235, 42, 42);
+        Debug.Log(tPosZ + " - " + tPosX);
+        map[tPosZ - 235-1, tPosX - 235-1, 2] = dI;
+        map[tPosZ - 235-1, tPosX - 235,   2] = dI;
+        map[tPosZ - 235-1, tPosX - 235+1, 2] = dI;
+        map[tPosZ - 235, tPosX - 235-1,   2] = dI;
+        map[tPosZ - 235, tPosX - 235,     2] = dI;
+        map[tPosZ - 235, tPosX - 235+1,   2] = dI;
+        map[tPosZ - 235+1, tPosX - 235-1, 2] = dI;
+        map[tPosZ - 235+1, tPosX - 235,   2] = dI;
+        map[tPosZ - 235+1, tPosX - 235+1, 2] = dI;
 
-        map[tPosZ - 234 - 1, tPosX - 234 - 1, 1] = sN;
-        map[tPosZ - 234 - 1, tPosX - 234,     1] = sN;
-        map[tPosZ - 234 - 1, tPosX - 234 + 1, 1] = sN;
-        map[tPosZ - 234, tPosX - 234 - 1,     1] = sN;
-        map[tPosZ - 234, tPosX - 234,         1] = sN;
-        map[tPosZ - 234, tPosX - 234 + 1,     1] = sN;
-        map[tPosZ - 234 + 1, tPosX - 234 - 1, 1] = sN;
-        map[tPosZ - 234 + 1, tPosX - 234,     1] = sN;
-        map[tPosZ - 234 + 1, tPosX - 234 + 1, 1] = sN;
+        map[tPosZ - 235 - 1, tPosX - 235 - 1, 1] = sN;
+        map[tPosZ - 235 - 1, tPosX - 235,     1] = sN;
+        map[tPosZ - 235 - 1, tPosX - 235 + 1, 1] = sN;
+        map[tPosZ - 235, tPosX - 235 - 1,     1] = sN;
+        map[tPosZ - 235, tPosX - 235,         1] = sN;
+        map[tPosZ - 235, tPosX - 235 + 1,     1] = sN;
+        map[tPosZ - 235 + 1, tPosX - 235 - 1, 1] = sN;
+        map[tPosZ - 235 + 1, tPosX - 235,     1] = sN;
+        map[tPosZ - 235 + 1, tPosX - 235 + 1, 1] = sN;
 
-        map[tPosZ - 234 - 1, tPosX - 234 - 1, 0] = gR;
-        map[tPosZ - 234 - 1, tPosX - 234,     0] = gR;
-        map[tPosZ - 234- 1, tPosX - 234 + 1, 0] = gR;
-        map[tPosZ - 234, tPosX - 234 - 1,     0] = gR;
-        map[tPosZ - 234, tPosX - 234,         0] = gR;
-        map[tPosZ - 234, tPosX - 234 + 1,     0] = gR;
-        map[tPosZ - 234 + 1, tPosX - 234 - 1, 0] = gR;
-        map[tPosZ - 234 + 1, tPosX - 234,     0] = gR;
-        map[tPosZ - 234 + 1, tPosX - 234 + 1, 0] = gR;
-        tur.terrainData.SetAlphamaps(234, 234, map);
+        map[tPosZ - 235 - 1, tPosX - 235 - 1, 0] = gR;
+        map[tPosZ - 235 - 1, tPosX - 235,     0] = gR;
+        map[tPosZ - 235- 1, tPosX - 235 + 1, 0] = gR;
+        map[tPosZ - 235, tPosX - 235 - 1,     0] = gR;
+        map[tPosZ - 235, tPosX - 235,         0] = gR;
+        map[tPosZ - 235, tPosX - 235 + 1,     0] = gR;
+        map[tPosZ - 235 + 1, tPosX - 235 - 1, 0] = gR;
+        map[tPosZ - 235 + 1, tPosX - 235,     0] = gR;
+        map[tPosZ - 235 + 1, tPosX - 235 + 1, 0] = gR;
+        tur.terrainData.SetAlphamaps(235, 235, map);
     }
 
     string TextureOnTopOf()
