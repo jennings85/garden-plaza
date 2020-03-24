@@ -21,14 +21,18 @@ public class CursorController : MonoBehaviour
     private int plantCounter = 0;
     private GameObject shovelObj;
     private GameObject waterObj;
+    private GameObject surfaceObj;
     private bool testVar = true;
 
-    public Animation shovelDig;
     public int waterStrength;
     public Sprite shovImg;
     public Sprite magImg;
     public Sprite waterImg;
     public Sprite packet;
+
+    public Material grassPack;
+    public Material sandPack;
+    public Material dirtPack;
 
     //UI Specific Values
     private GameObject profOBJ;
@@ -70,8 +74,15 @@ public class CursorController : MonoBehaviour
     public float[] textureValues;
     private float[,,] originalTerrain;
 
+    //Animation
+    private Animator shovelAnim;
+    private Animator canAnim;
+    private Animator packetAnim;
+
     void Start()
     {
+
+
         curTexture = "Grass";
         topRightImg = GameObject.Find("Selector Image").GetComponent<Image>();
         aText = GameObject.Find("A_TEXT").GetComponent<Text>();
@@ -80,8 +91,15 @@ public class CursorController : MonoBehaviour
         yText = GameObject.Find("Y_TEXT").GetComponent<Text>();
 
         plantToSpawn = rose;
+
         shovelObj = GameObject.Find("Shovel");
         waterObj = GameObject.Find("Can");
+        surfaceObj = GameObject.Find("Surface Packet");
+        shovelAnim = shovelObj.GetComponent<Animator>();
+        canAnim = waterObj.GetComponent<Animator>();
+        packetAnim = surfaceObj.GetComponent<Animator>();
+
+
         profOBJ = GameObject.Find("profObjBack");
         modeSprite = GameObject.Find("modeSelect").GetComponent<Image>();
         GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
@@ -101,7 +119,6 @@ public class CursorController : MonoBehaviour
         sellText.gameObject.SetActive(false);
         profOBJ.SetActive(false);
         inputF.SetActive(false);
-        waterObj.SetActive(false);
 
         //Save Terrain
         originalTerrain = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
@@ -110,6 +127,8 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
+        //if()
+
         //Change Plant Testing
         if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
         {
@@ -128,16 +147,17 @@ public class CursorController : MonoBehaviour
         }
 
         //Change Tool
-        if (Input.GetButtonDown("X") && !shovelDig.IsPlaying("Shovel_Dig"))//!canWater.IsPlaying("Can_Pour")
+        if (Input.GetButtonDown("X"))//!canWater.IsPlaying("Can_Pour")
         {
             UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
             UIFlip.Play("UI_FLIP");
             if (curTool == 0) //SET TO WATER
             {
+                shovelAnim.SetBool("IsSwitchingOut", true);
+                shovelAnim.SetBool("IsSwitchingIn", false);
+                canAnim.SetBool("IsSwitchingIn", true);
                 curTool++;
                 modeSprite.sprite = waterImg;
-                shovelObj.SetActive(false);
-                waterObj.SetActive(true);
                 topRightImg.sprite = noYTR;
                 aText.text = "Pour Can";
                 yText.text = "";
@@ -146,11 +166,14 @@ public class CursorController : MonoBehaviour
             {
                 curTool++;
                 modeSprite.sprite = packet;
-                profOBJ.SetActive(false);
-                waterObj.SetActive(false);
                 topRightImg.sprite = fullTR;
                 aText.text = "Place Surface";
                 yText.text = "Alt. Surface";
+
+                canAnim.SetBool("IsSwitchingOut", true);
+                canAnim.SetBool("IsSwitchingIn", false);
+                packetAnim.SetBool("IsSwitchingIn", true);
+
             }
             else if (curTool == 2)//SET TO SELECT
             {
@@ -159,6 +182,8 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = noATR;
                 aText.text = "";
                 yText.text = "";
+                packetAnim.SetBool("IsSwitchingOut", true);
+                packetAnim.SetBool("IsSwitchingIn", false);
             }
             else
             {
@@ -167,9 +192,10 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = fullTR;
                 aText.text = "Plant";
                 yText.text = "Change Seed";
-                profOBJ.SetActive(false);
-                waterObj.SetActive(false);
-                shovelObj.SetActive(true);
+
+                shovelAnim.SetBool("IsSwitchingIn", true);
+                packetAnim.SetBool("IsSwitchingOut", false);
+
             }
         }
         //Input w/Surface Packet
@@ -182,30 +208,28 @@ public class CursorController : MonoBehaviour
             if(curTexture == "Grass")
             {
                 curTexture = "Sand";
-                debugText.text = "Sand";
+                surfaceObj.GetComponent<Renderer>().material = sandPack;
             }
             else if(curTexture == "Sand")
             {
                 curTexture = "Dirt";
-                debugText.text = "Dirt";
+                surfaceObj.GetComponent<Renderer>().material = dirtPack;
+
             }
             else
             {
                 curTexture = "Grass";
-                debugText.text = "Grass";
+                surfaceObj.GetComponent<Renderer>().material = grassPack;
             }
         }
 
         //Input w/Tool if PLANT
-        if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden && !shovelDig.IsPlaying("Shovel_Dig") && currentCol == null)
+        if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden && currentCol == null)
         {
             if (GM.candyCount >= 250)
             {
                 if(TextureOnTopOf() != "Sand")
                 {
-                    shovelDig["Shovel_Dig"].wrapMode = WrapMode.Once;
-                    shovelDig.Play("Shovel_Dig");
-
                     var euler = transform.eulerAngles;
                     euler.y = Random.Range(0.0f, 360.0f);
                     GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, -.02f, transform.GetChild(0).position.z), Quaternion.identity);
@@ -455,10 +479,7 @@ public class CursorController : MonoBehaviour
 
         //now we can apply the movement:
         transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
-        if (!shovelDig.IsPlaying("Shovel_Dig"))
-        {
-            transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
-        }
+        transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
     }
     public IEnumerator LeftGarden()
     {
