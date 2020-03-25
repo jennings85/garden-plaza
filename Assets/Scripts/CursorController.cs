@@ -16,9 +16,9 @@ public class CursorController : MonoBehaviour
     private GameObject cam;
 
     //Tool Specific Values
-    private string[] toolList = { "Shovel", "Watering Can", "Surface Packet","Select", };
+    private string[] toolList = {"Shovel", "Watering Can", "Surface Packet", "Seed Bag", };
     private int curTool = 0;
-    private Image modeSprite;
+    private bool onTool = false;
     private int plantCounter = 0;
     private GameObject shovelObj;
     private GameObject waterObj;
@@ -26,10 +26,6 @@ public class CursorController : MonoBehaviour
     private bool testVar = true;
 
     public int waterStrength;
-    public Sprite shovImg;
-    public Sprite magImg;
-    public Sprite waterImg;
-    public Sprite packet;
 
     public Material grassPack;
     public Material sandPack;
@@ -47,7 +43,6 @@ public class CursorController : MonoBehaviour
     private Text candyText;
     private Text itemType;
     private Text ageText;
-    private GameObject inputF;
     private bool UIVisible = false;
     public Text debugText;
     public Animation UIFlip;
@@ -83,9 +78,13 @@ public class CursorController : MonoBehaviour
     private Animator shovelAnim;
     private Animator canAnim;
     private Animator packetAnim;
+    private Animator toolUIAnim;
+    private GameObject arrowUI;
 
     public bool paused = false;
     private bool justPaused = false;
+    private bool toolPickerUp = false;
+    private int selectedTool = 0;
 
     void Start()
     {
@@ -109,13 +108,12 @@ public class CursorController : MonoBehaviour
         shovelAnim = shovelObj.GetComponent<Animator>();
         canAnim = waterObj.GetComponent<Animator>();
         packetAnim = surfaceObj.GetComponent<Animator>();
-
+        toolUIAnim = GameObject.Find("Tool Picker UI").GetComponent<Animator>();
+        arrowUI = GameObject.Find("Tool Picker Arrow");
 
         profOBJ = GameObject.Find("profObjBack");
-        modeSprite = GameObject.Find("modeSelect").GetComponent<Image>();
         GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
         profOBJ = GameObject.Find("profObjBack");
-        inputF = GameObject.Find("renameInput");
         lifeArrow = GameObject.Find("lifeArrow");
         waterArrow = GameObject.Find("waterArrow");
 
@@ -129,7 +127,6 @@ public class CursorController : MonoBehaviour
         //Disable UI
         sellText.gameObject.SetActive(false);
         profOBJ.SetActive(false);
-        inputF.SetActive(false);
         pauseUI.SetActive(false);
 
         //Save Terrain
@@ -139,6 +136,55 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
+        //Tool UI is Up
+        if(toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("Tool_UI_Switch_In"))
+        {
+
+            float aim_angle = -1000;
+            if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+            {
+                float x = -Input.GetAxis("Horizontal");
+                float y = Input.GetAxis("Vertical");
+                aim_angle = Mathf.Atan2(x, y) * Mathf.Rad2Deg;
+            }
+            if(aim_angle != -1000)
+            {
+                if (aim_angle > -40 && aim_angle < 40)
+                {
+                    aim_angle = 0;
+                    selectedTool = 0;
+                }
+                else if (aim_angle < -40 && aim_angle > -140)
+                {
+                    aim_angle = -90;
+                    selectedTool = 1;
+                }
+                else if (aim_angle < -140 || aim_angle > 140)
+                {
+                    aim_angle = 180;
+                    selectedTool = 2;
+                }
+                else if (aim_angle < 140 && aim_angle > 40)
+                {
+                    aim_angle = 90;
+                    selectedTool = 3;
+                }
+                arrowUI.transform.rotation = Quaternion.AngleAxis(aim_angle, Vector3.forward);
+            }
+
+            if (Input.GetButtonDown("A"))
+            {
+                ChangeTool(curTool,selectedTool);
+                toolUIAnim.SetBool("IsSwitchingOut", true);
+            }
+            else if (Input.GetButtonDown("B"))
+            {
+                ChangeTool(curTool,-1);
+                toolUIAnim.SetBool("IsSwitchingOut", true);
+            }
+        }
+
+
         if (paused)
         {
             if (Input.GetButtonDown("Pause"))
@@ -159,11 +205,17 @@ public class CursorController : MonoBehaviour
             paused = true;
             pauseUI.SetActive(true);
         }
-        
 
-        if(!paused)
+
+        if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("Tool_UI_Switch_In"))
         {
-            if(Input.GetButtonDown("B"))
+            toolPickerUp = true;
+            toolUIAnim.SetBool("IsSwitchingIn", true);
+        }
+
+        if (!paused && !toolPickerUp)
+        {
+            if (Input.GetButtonDown("B"))
             {
                 profOBJ.SetActive(false);
             }
@@ -209,54 +261,7 @@ public class CursorController : MonoBehaviour
 
             justPaused = false;
             //Change Tool
-            if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
-            {
-                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-                UIFlip.Play("UI_FLIP");
-                toolFX.Play();
-                if (curTool == 0) //SET TO WATER
-                {
-                    shovelAnim.SetBool("IsSwitchingOut", true);
-                    canAnim.SetBool("IsSwitchingIn", true);
-                    curTool++;
-                    modeSprite.sprite = waterImg;
-                    topRightImg.sprite = noYTR;
-                    aText.text = "Pour Can";
-                    yText.text = "";
-                }
-                else if (curTool == 1)//SET TO SURFACE PACKET
-                {
-                    curTool++;
-                    modeSprite.sprite = packet;
-                    topRightImg.sprite = fullTR;
-                    aText.text = "Place Surface";
-                    yText.text = "Alt. Surface";
 
-                    canAnim.SetBool("IsSwitchingOut", true);
-                    packetAnim.SetBool("IsSwitchingIn", true);
-
-                }
-                else if (curTool == 2)//SET TO SELECT
-                {
-                    curTool++;
-                    modeSprite.sprite = magImg;
-                    topRightImg.sprite = noATR;
-                    aText.text = "";
-                    yText.text = "";
-                    packetAnim.SetBool("IsSwitchingOut", true);
-                }
-                else
-                {
-                    curTool = 0;
-                    modeSprite.sprite = shovImg;
-                    topRightImg.sprite = fullTR;
-                    aText.text = "Plant";
-                    yText.text = "Change Seed";
-
-                    shovelAnim.SetBool("IsSwitchingIn", true);
-
-                }
-            }
             //Input w/Surface Packet
             if (Input.GetButton("A") && toolList[curTool] == "Surface Packet" && InGarden)
             {
@@ -343,6 +348,72 @@ public class CursorController : MonoBehaviour
                 waterArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2(((selectedObj.GetComponent<Plant>().waterLevel - 100f)), -159);
             }
         }
+    }
+
+    void ChangeTool(int cT, int nT) //Ran if X is pressed outside pause and no moving animation playing
+    {
+        //Fade out of tool if not -1 (select)
+        if(cT == 1 && nT != 1)
+        {
+            toolFX.Play();
+            shovelAnim.SetBool("IsSwitchingOut", true);
+        }
+        else if (cT == 2 && nT != 2)
+        {
+            toolFX.Play();
+            canAnim.SetBool("IsSwitchingOut", true);
+        }
+        else if (cT == 3 && nT != 3)
+        {
+            toolFX.Play();
+            packetAnim.SetBool("IsSwitchingOut", true);
+        }
+        else if (cT == 2 && nT != 2)
+        {
+            toolFX.Play();
+            //seedAnim.SetBool("IsSwitchingOut", true);
+        }
+        //Fade in tool if not -1
+        if (nT == 1 && cT != 1)
+        {
+            curTool = 1;
+            topRightImg.sprite = noYTR;
+            aText.text = "Dig Hole";
+            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+            UIFlip.Play("UI_FLIP");
+            shovelAnim.SetBool("IsSwitchingIn", true);
+        }
+        else if (nT == 2 && cT != 2)
+        {
+            curTool = 2;
+            topRightImg.sprite = noYTR;
+            aText.text = "Pour Water";
+            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+            UIFlip.Play("UI_FLIP");
+            canAnim.SetBool("IsSwitchingIn", true);
+        }
+        else if (nT == 3 && cT != 3)
+        {
+            curTool = 3;
+            topRightImg.sprite = fullTR;
+            aText.text = "Pour Surface";
+            yText.text = "Alt. Surface";
+            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+            UIFlip.Play("UI_FLIP");
+            packetAnim.SetBool("IsSwitchingIn", true);
+        }
+        else if (nT == 4 && cT != 4)
+        {
+            curTool = 4;
+            topRightImg.sprite = fullTR;
+            aText.text = "Plant Seed";
+            yText.text = "Change Seed";
+            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+            UIFlip.Play("UI_FLIP");
+            //seedAnim.SetBool("IsSwitchingIn", true);
+        }
+        toolPickerUp = false;
+        toolUIAnim.SetBool("IsSwitchingOut", true);
     }
 
     void DrawTexture(string tx)
@@ -528,7 +599,7 @@ public class CursorController : MonoBehaviour
 
         transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
 
-        if(!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig"))
+        if(!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig") && !toolPickerUp)
         {
             transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
         }
