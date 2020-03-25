@@ -36,6 +36,7 @@ public class CursorController : MonoBehaviour
     public Material dirtPack;
 
     private GameObject waterFX;
+    private ParticleSystem toolFX;
 
     //UI Specific Values
     private GameObject profOBJ;
@@ -90,6 +91,7 @@ public class CursorController : MonoBehaviour
     {
         waterFX = GameObject.Find("WaterFX");
         waterFX.SetActive(false);
+        toolFX = GameObject.Find("ToolFX").GetComponent<ParticleSystem>();
         cam = GameObject.Find("cameraHelper");
         curTexture = "Grass";
         pauseUI = GameObject.Find("Pause UI");
@@ -161,6 +163,10 @@ public class CursorController : MonoBehaviour
 
         if(!paused)
         {
+            if(Input.GetButtonDown("B"))
+            {
+                profOBJ.SetActive(false);
+            }
             if(canAnim.GetCurrentAnimatorStateInfo(0).IsName("Can_Pour"))
             {
                 if (waterObj.transform.eulerAngles.x == 291)
@@ -207,6 +213,7 @@ public class CursorController : MonoBehaviour
             {
                 UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
                 UIFlip.Play("UI_FLIP");
+                toolFX.Play();
                 if (curTool == 0) //SET TO WATER
                 {
                     shovelAnim.SetBool("IsSwitchingOut", true);
