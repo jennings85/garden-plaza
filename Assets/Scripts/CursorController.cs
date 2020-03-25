@@ -13,6 +13,7 @@ public class CursorController : MonoBehaviour
     public Color REDCOLOR;
     public Color GREYCOLOR;
     public float speed;
+    private GameObject cam;
 
     //Tool Specific Values
     private string[] toolList = { "Shovel", "Watering Can", "Surface Packet","Select", };
@@ -34,6 +35,8 @@ public class CursorController : MonoBehaviour
     public Material sandPack;
     public Material dirtPack;
 
+    private GameObject waterFX;
+
     //UI Specific Values
     private GameObject profOBJ;
     private GameObject lifeArrow;
@@ -47,6 +50,7 @@ public class CursorController : MonoBehaviour
     private bool UIVisible = false;
     public Text debugText;
     public Animation UIFlip;
+    private GameObject pauseUI;
 
 
     private Image topRightImg;
@@ -79,11 +83,16 @@ public class CursorController : MonoBehaviour
     private Animator canAnim;
     private Animator packetAnim;
 
+    public bool paused = false;
+    private bool justPaused = false;
+
     void Start()
     {
-
-
+        waterFX = GameObject.Find("WaterFX");
+        waterFX.SetActive(false);
+        cam = GameObject.Find("cameraHelper");
         curTexture = "Grass";
+        pauseUI = GameObject.Find("Pause UI");
         topRightImg = GameObject.Find("Selector Image").GetComponent<Image>();
         aText = GameObject.Find("A_TEXT").GetComponent<Text>();
         bText = GameObject.Find("B_TEXT").GetComponent<Text>();
@@ -119,6 +128,7 @@ public class CursorController : MonoBehaviour
         sellText.gameObject.SetActive(false);
         profOBJ.SetActive(false);
         inputF.SetActive(false);
+        pauseUI.SetActive(false);
 
         //Save Terrain
         originalTerrain = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
@@ -127,163 +137,205 @@ public class CursorController : MonoBehaviour
 
     void Update()
     {
-        //Change Plant Testing
-        if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
+        if (paused)
         {
-            if (testVar)
+            if (Input.GetButtonDown("Pause"))
             {
-                plantToSpawn = bluebell;
-                testVar = false;
-                debugText.text = "Bluebell";
+                Time.timeScale = 1f;
+                paused = false;
+                pauseUI.SetActive(false);
+                justPaused = true;
             }
-            else
+            if (Input.GetButtonDown("X"))
             {
-                plantToSpawn = rose;
-                testVar = true;
-                debugText.text = "Rose";
+                Application.Quit();
             }
         }
-
-        //Change Tool
-        if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
+        if (Input.GetButtonDown("Pause") && !paused && !justPaused)
         {
-            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-            UIFlip.Play("UI_FLIP");
-            if (curTool == 0) //SET TO WATER
-            {
-                shovelAnim.SetBool("IsSwitchingOut", true);
-                canAnim.SetBool("IsSwitchingIn", true);
-                curTool++;
-                modeSprite.sprite = waterImg;
-                topRightImg.sprite = noYTR;
-                aText.text = "Pour Can";
-                yText.text = "";
-            }
-            else if (curTool == 1)//SET TO SURFACE PACKET
-            {
-                curTool++;
-                modeSprite.sprite = packet;
-                topRightImg.sprite = fullTR;
-                aText.text = "Place Surface";
-                yText.text = "Alt. Surface";
-
-                canAnim.SetBool("IsSwitchingOut", true);
-                packetAnim.SetBool("IsSwitchingIn", true);
-
-            }
-            else if (curTool == 2)//SET TO SELECT
-            {
-                curTool++;
-                modeSprite.sprite = magImg;
-                topRightImg.sprite = noATR;
-                aText.text = "";
-                yText.text = "";
-                packetAnim.SetBool("IsSwitchingOut", true);
-            }
-            else
-            {
-                curTool = 0;
-                modeSprite.sprite = shovImg;
-                topRightImg.sprite = fullTR;
-                aText.text = "Plant";
-                yText.text = "Change Seed";
-
-                shovelAnim.SetBool("IsSwitchingIn", true);
-
-            }
+            Time.timeScale = 0f;
+            paused = true;
+            pauseUI.SetActive(true);
         }
-        //Input w/Surface Packet
-        if (Input.GetButton("A") && toolList[curTool] == "Surface Packet" && InGarden)
-        {
-            DrawTexture(curTexture);
-        }
-        if(Input.GetButtonDown("Y") && toolList[curTool] == "Surface Packet")
-        {
-            if(curTexture == "Grass")
-            {
-                curTexture = "Sand";
-                surfaceObj.GetComponent<Renderer>().material = sandPack;
-            }
-            else if(curTexture == "Sand")
-            {
-                curTexture = "Dirt";
-                surfaceObj.GetComponent<Renderer>().material = dirtPack;
+        
 
-            }
-            else
-            {
-                curTexture = "Grass";
-                surfaceObj.GetComponent<Renderer>().material = grassPack;
-            }
-        }
-
-        //Input w/Tool if PLANT
-        if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden && currentCol == null)
+        if(!paused)
         {
-            if (GM.candyCount >= 250)
+            if(canAnim.GetCurrentAnimatorStateInfo(0).IsName("Can_Pour"))
             {
-                if(TextureOnTopOf() != "Sand")
+                if (waterObj.transform.eulerAngles.x == 291)
                 {
-                    var euler = transform.eulerAngles;
-                    euler.y = Random.Range(0.0f, 360.0f);
-                    GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, -.02f, transform.GetChild(0).position.z), Quaternion.identity);
-                    justIn.transform.Rotate(euler);
-                    justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
-                    int price = justIn.GetComponent<Plant>().price;
-                    plantCounter++;
-                    GM.addPlant(justIn);
-                    StartCoroutine(UpdateCandy(GM.candyCount, price));
-                    GM.candyCount -= price;
-                    candyText.text = GM.candyCount.ToString("N0");
+                    waterFX.SetActive(true);
                 }
                 else
                 {
-                    debugText.text = "Can't plant on sand!";
+                    waterFX.SetActive(false);
                 }
+                if (currentCol != null && currentCol.tag == "Plant") //water can stuff
+                {
+                    profOBJ.SetActive(true);
+                    UIVisible = true;
+                    selectedObj = currentCol.gameObject;
+                    ageText.text = selectedObj.GetComponent<Plant>().getAge();
+                    itemNick.text = selectedObj.GetComponent<Plant>().pNick;
+                    itemType.text = selectedObj.GetComponent<Plant>().pName;
+                    selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
 
+                }
+            }
+            
+
+            if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
+            {
+                if (testVar)
+                {
+                    plantToSpawn = bluebell;
+                    testVar = false;
+                    debugText.text = "Bluebell";
+                }
+                else
+                {
+                    plantToSpawn = rose;
+                    testVar = true;
+                    debugText.text = "Rose";
+                }
+            }
+
+            justPaused = false;
+            //Change Tool
+            if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
+            {
+                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
+                UIFlip.Play("UI_FLIP");
+                if (curTool == 0) //SET TO WATER
+                {
+                    shovelAnim.SetBool("IsSwitchingOut", true);
+                    canAnim.SetBool("IsSwitchingIn", true);
+                    curTool++;
+                    modeSprite.sprite = waterImg;
+                    topRightImg.sprite = noYTR;
+                    aText.text = "Pour Can";
+                    yText.text = "";
+                }
+                else if (curTool == 1)//SET TO SURFACE PACKET
+                {
+                    curTool++;
+                    modeSprite.sprite = packet;
+                    topRightImg.sprite = fullTR;
+                    aText.text = "Place Surface";
+                    yText.text = "Alt. Surface";
+
+                    canAnim.SetBool("IsSwitchingOut", true);
+                    packetAnim.SetBool("IsSwitchingIn", true);
+
+                }
+                else if (curTool == 2)//SET TO SELECT
+                {
+                    curTool++;
+                    modeSprite.sprite = magImg;
+                    topRightImg.sprite = noATR;
+                    aText.text = "";
+                    yText.text = "";
+                    packetAnim.SetBool("IsSwitchingOut", true);
+                }
+                else
+                {
+                    curTool = 0;
+                    modeSprite.sprite = shovImg;
+                    topRightImg.sprite = fullTR;
+                    aText.text = "Plant";
+                    yText.text = "Change Seed";
+
+                    shovelAnim.SetBool("IsSwitchingIn", true);
+
+                }
+            }
+            //Input w/Surface Packet
+            if (Input.GetButton("A") && toolList[curTool] == "Surface Packet" && InGarden)
+            {
+                DrawTexture(curTexture);
+            }
+            if (Input.GetButtonDown("Y") && toolList[curTool] == "Surface Packet")
+            {
+                if (curTexture == "Grass")
+                {
+                    curTexture = "Sand";
+                    surfaceObj.GetComponent<Renderer>().material = sandPack;
+                }
+                else if (curTexture == "Sand")
+                {
+                    curTexture = "Dirt";
+                    surfaceObj.GetComponent<Renderer>().material = dirtPack;
+
+                }
+                else
+                {
+                    curTexture = "Grass";
+                    surfaceObj.GetComponent<Renderer>().material = grassPack;
+                }
+            }
+
+            //Input w/Tool if PLANT
+            if (Input.GetButtonDown("A") && toolList[curTool] == "Shovel" && InGarden && currentCol == null)
+            {
+                if (GM.candyCount >= 250)
+                {
+                    if (TextureOnTopOf() != "Sand")
+                    {
+                        shovelAnim.SetBool("IsDigging", true);
+                        var euler = transform.eulerAngles;
+                        euler.y = Random.Range(0.0f, 360.0f);
+                        GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, -.02f, transform.GetChild(0).position.z), Quaternion.identity);
+                        justIn.transform.Rotate(euler);
+                        justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
+                        int price = justIn.GetComponent<Plant>().price;
+                        plantCounter++;
+                        GM.addPlant(justIn);
+                        StartCoroutine(UpdateCandy(GM.candyCount, price));
+                        GM.candyCount -= price;
+                        candyText.text = GM.candyCount.ToString("N0");
+                    }
+                    else
+                    {
+                        debugText.text = "Can't plant on sand!";
+                    }
+
+                }
+            }
+            else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Plant")
+            {
+                profOBJ.SetActive(true);
+                UIVisible = true;
+                selectedObj = currentCol.gameObject;
+                ageText.text = selectedObj.GetComponent<Plant>().getAge();
+                itemNick.text = selectedObj.GetComponent<Plant>().pNick;
+                itemType.text = selectedObj.GetComponent<Plant>().pName;
+            }
+            else if (Input.GetButtonDown("A") && toolList[curTool] == "Watering Can" && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
+            {
+                canAnim.SetBool("IsPouring", true);
+            }
+            else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Pickup")
+            {
+                Pickup PS = currentCol.GetComponent<Pickup>();
+                Destroy(currentCol.gameObject);
+                StartCoroutine(UpdateCandy(GM.candyCount, -PS.candyValue));
+                GM.candyCount += PS.candyValue;
+                candyText.text = GM.candyCount.ToString("N0");
+                sellText.gameObject.SetActive(false);
+                topRightImg.sprite = noATR;
+                aText.text = "";
+            }
+
+
+            //Update UI
+            if (UIVisible)
+            {
+                ageText.text = selectedObj.GetComponent<Plant>().getAge();
+                lifeArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2((97 + (selectedObj.GetComponent<Plant>().getLifeLerp() * -200f)), -43);
+                waterArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2(((selectedObj.GetComponent<Plant>().waterLevel - 100f)), -159);
             }
         }
-        else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Plant")
-        {
-            profOBJ.SetActive(true);
-            UIVisible = true;
-            selectedObj = currentCol.gameObject;
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-            itemType.text = selectedObj.GetComponent<Plant>().pName;
-        }
-        else if (Input.GetButton("A") && toolList[curTool] == "Watering Can" && currentCol != null && currentCol.tag == "Plant")
-        {
-            profOBJ.SetActive(true);
-            UIVisible = true;
-            selectedObj = currentCol.gameObject;
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-            itemType.text = selectedObj.GetComponent<Plant>().pName;
-            //WATER CODE
-            selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
-        }
-        else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Pickup")
-        {
-            Pickup PS = currentCol.GetComponent<Pickup>();
-            Destroy(currentCol.gameObject);
-            StartCoroutine(UpdateCandy(GM.candyCount, -PS.candyValue));
-            GM.candyCount += PS.candyValue;
-            candyText.text = GM.candyCount.ToString("N0");
-            sellText.gameObject.SetActive(false);
-            topRightImg.sprite = noATR;
-            aText.text = "";
-        }
-
-
-        //Update UI
-        if (UIVisible)
-        {
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            lifeArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2((97 + (selectedObj.GetComponent<Plant>().getLifeLerp() * -200f)), -43);
-            waterArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2(((selectedObj.GetComponent<Plant>().waterLevel - 100f)), -159);
-        }
-
     }
 
     void DrawTexture(string tx)
@@ -315,7 +367,6 @@ public class CursorController : MonoBehaviour
         tPosX = (int)(mapPosition.x * tur.terrainData.alphamapWidth);
         tPosZ = (int)(mapPosition.z * tur.terrainData.alphamapHeight);
         float[,,] map = tur.terrainData.GetAlphamaps(235, 235, 42, 42);
-        Debug.Log(tPosZ + " - " + tPosX);
         map[tPosZ - 235-1, tPosX - 235-1, 2] = dI;
         map[tPosZ - 235-1, tPosX - 235,   2] = dI;
         map[tPosZ - 235-1, tPosX - 235+1, 2] = dI;
@@ -456,25 +507,27 @@ public class CursorController : MonoBehaviour
         float horizontalAxis = Input.GetAxis("Horizontal");
         float verticalAxis = Input.GetAxis("Vertical");
 
-        //assuming we only using the single camera:
         var camera = Camera.main;
 
-        //camera forward and right vectors:
         var forward = camera.transform.forward;
         var right = camera.transform.right;
 
-        //project forward and right vectors on the horizontal plane (y = 0)
         forward.y = 0f;
         right.y = 0f;
         forward.Normalize();
         right.Normalize();
 
-        //this is the direction in the world space we want to move:
         var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
 
-        //now we can apply the movement:
         transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
-        transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
+
+        if(!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig"))
+        {
+            transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
+        }
+
+        float h = 115 * Input.GetAxis("axisName") * Time.deltaTime;
+        cam.transform.Rotate(0, h, 0);
     }
     public IEnumerator LeftGarden()
     {

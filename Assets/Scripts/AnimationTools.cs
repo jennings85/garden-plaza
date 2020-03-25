@@ -11,5 +11,13 @@ public class AnimationTools : StateMachineBehaviour
     {
         animator.SetBool("IsSwitchingOut", false);
         animator.SetBool("IsSwitchingIn", false);
+        if (animator.gameObject.name == "Shovel")
+        {
+            animator.SetBool("IsDigging", false);
+        }
+        if (animator.gameObject.name == "Can")
+        {
+            animator.SetBool("IsPouring", false);
+        }
     }
 }

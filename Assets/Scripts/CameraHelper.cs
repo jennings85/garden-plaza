@@ -8,7 +8,7 @@ public class CameraHelper : MonoBehaviour
     public GameObject tool;
     void Update()
     {
-        float h = speed * Input.GetAxis("axisName") * Time.deltaTime;
-        transform.Rotate(0, h, 0);
+        //float h = speed * Input.GetAxis("axisName") * Time.deltaTime;
+        //transform.Rotate(0, h, 0);
     }
 }
