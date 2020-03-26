@@ -10555,7 +10555,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Plant
+  m_Text: '
 
 '
 --- !u!222 &397037266
@@ -17496,7 +17496,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5d8bab789f2d4224b956df71e33a1c47, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4fb5c7f6b93b204bad764f9129daa6f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17842,17 +17842,17 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 8b5387ddd3c86cf43b3cba3044a981a7,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8b5387ddd3c86cf43b3cba3044a981a7,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8b5387ddd3c86cf43b3cba3044a981a7,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2416733968201007103, guid: 8b5387ddd3c86cf43b3cba3044a981a7,
         type: 3}
@@ -19816,7 +19816,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Change Seed
+  m_Text: '
 
 '
 --- !u!222 &1959284213
