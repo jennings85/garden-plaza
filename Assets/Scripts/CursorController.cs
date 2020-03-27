@@ -1,137 +1,128 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
 public class CursorController : MonoBehaviour
 {
-    //GardenManagment Specific Values
-    private GardenManager GM;
+    //Initaliaze Variables
     private bool InGarden = true;
-
-    //Cursor Specific Values
-    public Color REDCOLOR;
-    public Color GREYCOLOR;
-    public float speed;
-    private GameObject cam;
-
-    //Tool Specific Values
-    private string[] toolList = {"Select", "Shovel", "Watering Can", "Surface Packet", "Seed Bag", };
-    private int curTool = 0;
-    private bool onTool = false;
+    private bool testVar = true;
+    private bool UIVisible = false;
+    private bool paused = false;
+    private bool toolPickerUp = false;
+    private bool justPaused = false;
+    private int tPosX;
+    private int tPosZ;
     private int plantCounter = 0;
+    private int curTool = 0;
+    private int selectedTool = 0;
+    private int waterStrength = 20;
+    private float[] textureValues;
+    private float[,,] originalTerrain;
+    private float speed = 10;
+    private string curTexture = "Grass";
+    private string[] toolList = { "Select", "Shovel", "Watering Can", "Surface Packet", "Seed Bag"};
+    private ParticleSystem toolFX;
+    private GardenManager GM;
+    private GameObject cam;
     private GameObject shovelObj;
     private GameObject waterObj;
     private GameObject surfaceObj;
-    private bool testVar = true;
-
-    public int waterStrength;
-
-    public Material grassPack;
-    public Material sandPack;
-    public Material dirtPack;
-
     private GameObject waterFX;
-    private ParticleSystem toolFX;
-
-    //UI Specific Values
     private GameObject profOBJ;
     private GameObject lifeArrow;
     private GameObject waterArrow;
+    private GameObject plantToSpawn;
+    private GameObject selectedObj;
+    private GameObject pauseUI;
+    private GameObject arrowUI;
+    private GameObject rose;
+    private GameObject bluebell;
+    private Collider currentCol;
+    private Animator shovelAnim;
+    private Animator canAnim;
+    private Animator packetAnim;
+    private Animator UIFlip;
+    private Animator toolUIAnim;
+    private Material grassPack;
+    private Material sandPack;
+    private Material dirtPack;
+    private Terrain tur;
+    private Sprite fullTR;
+    private Sprite noYTR;
+    private Sprite noATR;
+    private Image topRightImg;
     private Text sellText;
     private Text itemNick;
     private Text candyText;
     private Text itemType;
     private Text ageText;
-    private bool UIVisible = false;
-    public Text debugText;
-    public Animation UIFlip;
-    private GameObject pauseUI;
-
-
-    private Image topRightImg;
-    public Sprite fullTR;
-    public Sprite noYTR;
-    public Sprite noATR;
     private Text aText;
-    private Text xText;
     private Text yText;
-    private Text bText;
-
-    //Plants
-    public GameObject rose;
-    public GameObject bluebell;
-
-    private GameObject plantToSpawn;
-    private GameObject selectedObj;
-    private Collider currentCol;
-
-    //Terrain
-    private string curTexture;
-    public Terrain tur;
-    public int tPosX;
-    public int tPosZ;
-    public float[] textureValues;
-    private float[,,] originalTerrain;
-
-    //Animation
-    private Animator shovelAnim;
-    private Animator canAnim;
-    private Animator packetAnim;
-    private Animator toolUIAnim;
-    private GameObject arrowUI;
-
-    public bool paused = false;
-    private bool justPaused = false;
-    private bool toolPickerUp = false;
-    private int selectedTool = 0;
 
     void Start()
     {
-        waterFX = GameObject.Find("WaterFX");
-        waterFX.SetActive(false);
-        toolFX = GameObject.Find("ToolFX").GetComponent<ParticleSystem>();
-        cam = GameObject.Find("cameraHelper");
-        curTexture = "Grass";
-        pauseUI = GameObject.Find("Pause UI");
-        topRightImg = GameObject.Find("Selector Image").GetComponent<Image>();
-        aText = GameObject.Find("A_TEXT").GetComponent<Text>();
-        bText = GameObject.Find("B_TEXT").GetComponent<Text>();
-        xText = GameObject.Find("X_TEXT").GetComponent<Text>();
-        yText = GameObject.Find("Y_TEXT").GetComponent<Text>();
+        //<Set Baseline Variables and find Resources>
+        //-------------------------------------------
 
+        //Obtain and set the terrain textures
+        grassPack = Resources.Load<Material>("Mats/GrassPacket");
+        sandPack = Resources.Load<Material>("Mats/SandPacket");
+        dirtPack = Resources.Load<Material>("Mats/DirtPacket");
+        originalTerrain = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
+
+        //Obtain and set plant Prefabs
+        rose = Resources.Load<GameObject>("Prefabs/Rose");
+        bluebell = Resources.Load<GameObject>("Prefabs/Bluebell");
         plantToSpawn = rose;
 
-        shovelObj = GameObject.Find("Shovel");
-        waterObj = GameObject.Find("Can");
-        surfaceObj = GameObject.Find("Surface Packet");
-        shovelAnim = shovelObj.GetComponent<Animator>();
-        canAnim = waterObj.GetComponent<Animator>();
-        packetAnim = surfaceObj.GetComponent<Animator>();
-        toolUIAnim = GameObject.Find("Tool Picker UI").GetComponent<Animator>();
-        arrowUI = GameObject.Find("Tool Picker Arrow");
+        //Obtain and set UI Sprites
+        fullTR = Resources.Load<Sprite>("Images/uiPiece");
+        noYTR = Resources.Load<Sprite>("Images/uiPiece_noY");
+        noATR = Resources.Load<Sprite>("Images/uiPiece_noA");
 
-        profOBJ = GameObject.Find("profObjBack");
-        GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
-        profOBJ = GameObject.Find("profObjBack");
-        lifeArrow = GameObject.Find("lifeArrow");
-        waterArrow = GameObject.Find("waterArrow");
-
-        //Text and UI
+        //UI Variables
+        aText = GameObject.Find("A_TEXT").GetComponent<Text>();
+        yText = GameObject.Find("Y_TEXT").GetComponent<Text>();
         sellText = GameObject.Find("sellText").GetComponent<Text>();
         itemNick = GameObject.Find("itemName").GetComponent<Text>();
         itemType = GameObject.Find("itemType").GetComponent<Text>();
         ageText = GameObject.Find("ageText").GetComponent<Text>();
         candyText = GameObject.Find("Candy Text").GetComponent<Text>();
+        profOBJ = GameObject.Find("profObjBack");
+        lifeArrow = GameObject.Find("lifeArrow");
+        waterArrow = GameObject.Find("waterArrow");
+        pauseUI = GameObject.Find("Pause UI");
+        arrowUI = GameObject.Find("Tool Picker Arrow");
+        profOBJ = GameObject.Find("profObjBack");
 
-        //Disable UI
+        //Tool Specific Variables
+        waterFX = GameObject.Find("WaterFX");
+        toolFX = GameObject.Find("ToolFX").GetComponent<ParticleSystem>();
+        topRightImg = GameObject.Find("Selector Image").GetComponent<Image>();
+        shovelObj = GameObject.Find("Shovel");
+        waterObj = GameObject.Find("Can");
+        surfaceObj = GameObject.Find("Surface Packet");
+
+        //Disable Relevant Objects
         sellText.gameObject.SetActive(false);
+        waterFX.SetActive(false);
         profOBJ.SetActive(false);
         pauseUI.SetActive(false);
 
-        //Save Terrain
-        originalTerrain = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
+        //Animation Variables
+        toolUIAnim = GameObject.Find("Tool Picker UI").GetComponent<Animator>();
+        UIFlip = GameObject.Find("Top Right UI").GetComponent<Animator>();
+        shovelAnim = shovelObj.GetComponent<Animator>();
+        canAnim = waterObj.GetComponent<Animator>();
+        packetAnim = surfaceObj.GetComponent<Animator>();
 
+        //Misc. Variables
+        GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
+        cam = GameObject.Find("cameraHelper");
+
+        //Terrain Variables
+        tur = GameObject.Find("Terrain 0").GetComponent<Terrain>();
     }
 
     void Update()
@@ -240,23 +231,6 @@ public class CursorController : MonoBehaviour
 
                 }
             }
-            
-
-            if (Input.GetButtonDown("Y") && toolList[curTool] == "Shovel")
-            {
-                if (testVar)
-                {
-                    plantToSpawn = bluebell;
-                    testVar = false;
-                    debugText.text = "Bluebell";
-                }
-                else
-                {
-                    plantToSpawn = rose;
-                    testVar = true;
-                    debugText.text = "Rose";
-                }
-            }
 
             justPaused = false;
             //Change Tool
@@ -306,11 +280,6 @@ public class CursorController : MonoBehaviour
                         GM.candyCount -= price;
                         candyText.text = GM.candyCount.ToString("N0");
                     }
-                    else
-                    {
-                        debugText.text = "Can't plant on sand!";
-                    }
-
                 }
             }
             else if (Input.GetButton("A") && toolList[curTool] == "Select" && currentCol != null && currentCol.tag == "Plant")
@@ -379,13 +348,12 @@ public class CursorController : MonoBehaviour
         //Fade in tool if not 0
         if(nT != 0)
         {
+            UIFlip.SetBool("IsFlipping", true);
             if (nT == 1 && cT != 1)
             {
                 curTool = 1;
                 topRightImg.sprite = noYTR;
                 aText.text = "Dig Hole";
-                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-                UIFlip.Play("UI_FLIP");
                 shovelAnim.SetBool("IsSwitchingIn", true);
             }
             else if (nT == 2 && cT != 2)
@@ -393,8 +361,6 @@ public class CursorController : MonoBehaviour
                 curTool = 2;
                 topRightImg.sprite = noYTR;
                 aText.text = "Pour Water";
-                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-                UIFlip.Play("UI_FLIP");
                 canAnim.SetBool("IsSwitchingIn", true);
             }
             else if (nT == 3 && cT != 3)
@@ -403,8 +369,6 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = fullTR;
                 aText.text = "Pour Surface";
                 yText.text = "Alt. Surface";
-                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-                UIFlip.Play("UI_FLIP");
                 packetAnim.SetBool("IsSwitchingIn", true);
             }
             else if (nT == 4 && cT != 4)
@@ -413,8 +377,7 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = fullTR;
                 aText.text = "Plant Seed";
                 yText.text = "Change Seed";
-                UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-                UIFlip.Play("UI_FLIP");
+
                 //seedAnim.SetBool("IsSwitchingIn", true);
             }
         }
@@ -424,10 +387,9 @@ public class CursorController : MonoBehaviour
             topRightImg.sprite = noATR;
             aText.text = "";
             yText.text = "";
-            UIFlip["UI_FLIP"].wrapMode = WrapMode.Once;
-            UIFlip.Play("UI_FLIP");
+            UIFlip.SetBool("IsFlipping", true);
         }
-        
+
         toolPickerUp = false;
         toolUIAnim.SetBool("IsSwitchingOut", true);
     }
@@ -630,7 +592,7 @@ public class CursorController : MonoBehaviour
         while (ElapsedTime < TotalTime)
         {
             ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(REDCOLOR, GREYCOLOR, (ElapsedTime / TotalTime));
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.red, Color.gray, (ElapsedTime / TotalTime));
             yield return null;
         }
     }
@@ -641,7 +603,7 @@ public class CursorController : MonoBehaviour
         while (ElapsedTime < TotalTime)
         {
             ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(GREYCOLOR, REDCOLOR, (ElapsedTime / TotalTime));
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.gray, Color.red, (ElapsedTime / TotalTime));
             yield return null;
         }
     }
