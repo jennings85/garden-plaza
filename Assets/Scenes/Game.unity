@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 19848253}
   - component: {fileID: 19848252}
   m_Layer: 0
-  m_Name: Terrain_0_0_b772c976-20af-409f-a2af-a9a66e971f68
+  m_Name: Terrain 0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10521,7 +10521,7 @@ RectTransform:
   - {fileID: 1002352655}
   - {fileID: 147095433}
   m_Father: {fileID: 1857723139}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10578,7 +10578,7 @@ Transform:
   - {fileID: 2141359752}
   - {fileID: 1178408172}
   m_Father: {fileID: 1857723139}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &397037263
 GameObject:
@@ -16262,29 +16262,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfd05094e5dbe0c4bb049eb215d9e1c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  REDCOLOR: {r: 0.8666667, g: 0.11764706, b: 0.11764706, a: 0}
-  GREYCOLOR: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 0}
-  speed: 10
-  waterStrength: 18
-  grassPack: {fileID: 2100000, guid: e99ec2c6ea4d1584cbc7d646cf2e405b, type: 2}
-  sandPack: {fileID: 2100000, guid: 7d831bb13f5d6b5449559533be4c32cc, type: 2}
-  dirtPack: {fileID: 2100000, guid: 2225141b26d95434092b437f89c1a66d, type: 2}
-  debugText: {fileID: 884502048}
-  UIFlip: {fileID: 1678263646}
-  fullTR: {fileID: 21300000, guid: 5d8bab789f2d4224b956df71e33a1c47, type: 3}
-  noYTR: {fileID: 21300000, guid: 7e427edd69abc1941a75e80f0dd760ca, type: 3}
-  noATR: {fileID: 21300000, guid: c4fb5c7f6b93b204bad764f9129daa6f, type: 3}
-  rose: {fileID: 8351022477909797213, guid: 21b562f92f053274486c7f8e242c182b, type: 3}
-  bluebell: {fileID: 8351022477909797213, guid: 0fe52726c65828a48911b92d1212cb08,
-    type: 3}
-  tur: {fileID: 19848253}
-  tPosX: 0
-  tPosZ: 0
-  textureValues:
-  - 0
-  - 0
-  - 0
-  paused: 0
 --- !u!54 &740233012
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18493,7 +18470,7 @@ GameObject:
   - component: {fileID: 1678263645}
   - component: {fileID: 1678263646}
   m_Layer: 8
-  m_Name: TOP_RIGHT_UI_OBJ
+  m_Name: Top Right UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19200,8 +19177,8 @@ RectTransform:
   - {fileID: 49971311}
   - {fileID: 884502047}
   - {fileID: 1678263644}
-  - {fileID: 381087185}
   - {fileID: 373299604}
+  - {fileID: 381087185}
   - {fileID: 221448866}
   m_Father: {fileID: 0}
   m_RootOrder: 3
