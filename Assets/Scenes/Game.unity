@@ -10521,7 +10521,7 @@ RectTransform:
   - {fileID: 1002352655}
   - {fileID: 147095433}
   m_Father: {fileID: 1857723139}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10578,7 +10578,7 @@ Transform:
   - {fileID: 2141359752}
   - {fileID: 1178408172}
   m_Father: {fileID: 1857723139}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &397037263
 GameObject:
@@ -16262,7 +16262,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfd05094e5dbe0c4bb049eb215d9e1c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waterStrength: 18
 --- !u!54 &740233012
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -19178,8 +19177,8 @@ RectTransform:
   - {fileID: 49971311}
   - {fileID: 884502047}
   - {fileID: 1678263644}
-  - {fileID: 381087185}
   - {fileID: 373299604}
+  - {fileID: 381087185}
   - {fileID: 221448866}
   m_Father: {fileID: 0}
   m_RootOrder: 3
