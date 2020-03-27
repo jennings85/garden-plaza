@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\CameraHelper.cs" />
     <Compile Include="Assets\Scripts\CursorController.cs" />
     <Compile Include="Assets\Scripts\GardenManager.cs" />
+    <Compile Include="Assets\Scripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Menu.cs" />
     <Compile Include="Assets\Scripts\Pickup.cs" />
     <Compile Include="Assets\Scripts\Pinata.cs" />
