@@ -13,12 +13,13 @@ public class CursorController : MonoBehaviour
     private bool justPaused = false;
     private int tPosX;
     private int tPosZ;
-    private int plantCounter = 0;
+    //private int plantCounter = 0;
     private int curTool = 0;
     private int selectedTool = 0;
     private int waterStrength = 20;
     private float[] textureValues = {};
     private float[,,] originalTerrain;
+    private float[,] originalTerrainHeight;
     private float speed = 10;
     private float aim_angle = 0;
     private string curTexture = "Grass";
@@ -74,6 +75,7 @@ public class CursorController : MonoBehaviour
         dirtPack = Resources.Load<Material>("Mats/DirtPacket");
         tur = GameObject.Find("Terrain 0").GetComponent<Terrain>();
         originalTerrain = tur.terrainData.GetAlphamaps(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
+        originalTerrainHeight = tur.terrainData.GetHeights(0, 0, tur.terrainData.alphamapWidth, tur.terrainData.alphamapHeight);
 
         //Obtain and set plant Prefabs
         rose = Resources.Load<GameObject>("Prefabs/Rose");
@@ -130,6 +132,7 @@ public class CursorController : MonoBehaviour
     //Currently update is used to handle Pausing, UI updates, and tool usage, futher optimization for tool handling may be needed
     void Update()
     {
+        DigHole();
         //GAME PAUSED
         if (paused)
         {
@@ -334,26 +337,26 @@ public class CursorController : MonoBehaviour
     void ChangeTool(int cT, int nT) 
     {
         //Fade out of tool if not 0 (select)
-        if(cT != 0)
+        if(cT != nT)
+        {
+            toolFX.Play();
+        }
+        if (cT != 0)
         {
             if (cT == 1 && nT != 1)
             {
-                toolFX.Play();
                 shovelAnim.SetBool("IsSwitchingOut", true);
             }
             else if (cT == 2 && nT != 2)
             {
-                toolFX.Play();
                 canAnim.SetBool("IsSwitchingOut", true);
             }
             else if (cT == 3 && nT != 3)
             {
-                toolFX.Play();
                 packetAnim.SetBool("IsSwitchingOut", true);
             }
             else if (cT == 2 && nT != 2)
             {
-                toolFX.Play();
                 //seedAnim.SetBool("IsSwitchingOut", true);
             }
         }
@@ -502,6 +505,41 @@ public class CursorController : MonoBehaviour
         {
             return "Dirt";
         }
+    }
+
+    void DigHole()
+    {
+        int sizeOfHole = 5;
+        float startSub = 0.02f;
+        Vector3 terrainPosition = transform.position - tur.transform.position;
+        Vector3 mapPosition = new Vector3(terrainPosition.x / tur.terrainData.size.x, 0, terrainPosition.z / tur.terrainData.size.z);
+
+        tPosX = (int)(mapPosition.x * tur.terrainData.alphamapWidth);
+        tPosZ = (int)(mapPosition.z * tur.terrainData.alphamapHeight);
+
+
+        float[,] map = tur.terrainData.GetHeights(235, 235, 42, 42);
+        for(int i=0;i<sizeOfHole;i++)
+        {
+            for(int j=0;j<sizeOfHole;j++)
+            {
+                if((i == 0 || i == 4) || (j == 0 || j == 4))
+                {
+                    map[19+i, 19+j] -= map[19 + i, 19 + j] * .25f;
+                }
+                else if((i == 1 || i == 3) || (j == 1 || j == 3))
+                {
+                    map[19+i, 19 + j] -= map[19 + i, 19 + j] * .75f;
+                }
+                else if(j==2 && i==2)
+                {
+                    map[19 + i, 19 + j] = 0.000f;
+                }
+
+                Debug.Log(map[19+i, 19+j]);
+            }
+        }
+        tur.terrainData.SetHeights(235, 235, map);
     }
 
     //Player left the garden, update the cursor color
@@ -706,5 +744,7 @@ public class CursorController : MonoBehaviour
     {
         //Update the terrain with original alpha map (why are terrains like this?)
         tur.terrainData.SetAlphamaps(0, 0, originalTerrain);
+        tur.terrainData.SetHeights(0, 0, originalTerrainHeight);
+
     }
 }
