@@ -17,10 +17,11 @@ public class CursorController : MonoBehaviour
     private int curTool = 0;
     private int selectedTool = 0;
     private int waterStrength = 20;
-    private float[] textureValues = {};
+    private float[] textureValues = new float[3];
     private float[,,] originalTerrain;
     private float speed = 10;
     private float aim_angle = 0;
+    private string selectedSeed = "Rose";
     private string curTexture = "Grass";
     private string[] toolList = { "Select", "Shovel", "Watering Can", "Surface Packet", "Seed Bag"};
     private ParticleSystem toolFX;
@@ -286,7 +287,10 @@ public class CursorController : MonoBehaviour
             //Seed Bag is out
             else if(toolList[curTool] == "Seed Bag")
             {
-                //seed actions
+                if(Input.GetButtonDown("A"))
+                {
+                    SeedPlant(selectedSeed);
+                }
             }
 
             //Plant Profile is up, update the info
@@ -636,6 +640,32 @@ public class CursorController : MonoBehaviour
         }
     }
 
+    private void SeedPlant(string seedToPlace)
+    {
+        if(TextureOnTopOf() != "Sand")
+        {
+            GameObject plant = Resources.Load<GameObject>("Prefabs/" + seedToPlace);
+            int cost = plant.GetComponent<Plant>().price;
+            if (GM.candyCount >= cost)
+            {
+                shovelAnim.SetBool("IsDigging", true);
+                var euler = transform.eulerAngles;
+                euler.y = Random.Range(0.0f, 360.0f);
+                GameObject justIn = Instantiate(plant, new Vector3(transform.GetChild(0).position.x, -.02f, transform.GetChild(0).position.z), Quaternion.identity);
+                justIn.transform.Rotate(euler);
+                justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
+                plantCounter++;
+                GM.addPlant(justIn);
+                StartCoroutine(UpdateCandy(GM.candyCount, cost));
+                GM.candyCount -= cost;
+                candyText.text = GM.candyCount.ToString("N0");
+            }
+        }
+        else
+        {
+            //on sand, inform user
+        }
+    }
     //Below functions are standard functions that involve colliders and quitting the game
     void OnTriggerEnter(Collider collision)
     {
