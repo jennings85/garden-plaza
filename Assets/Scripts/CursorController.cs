@@ -27,6 +27,7 @@ public class CursorController : MonoBehaviour
     private ParticleSystem toolFX;
     private GardenManager GM;
     private GameObject cam;
+    private GameObject seedObj;
     private GameObject shovelObj;
     private GameObject waterObj;
     private GameObject surfaceObj;
@@ -42,6 +43,7 @@ public class CursorController : MonoBehaviour
     private GameObject bluebell;
     private Collider currentCol;
     private Animator shovelAnim;
+    private Animator seedAnim;
     private Animator canAnim;
     private Animator packetAnim;
     private Animator UIFlip;
@@ -108,6 +110,7 @@ public class CursorController : MonoBehaviour
         shovelObj = GameObject.Find("Shovel");
         waterObj = GameObject.Find("Can");
         surfaceObj = GameObject.Find("Surface Packet");
+        seedObj = GameObject.Find("Seed Bag");
 
         //Disable Relevant Objects
         sellText.gameObject.SetActive(false);
@@ -121,6 +124,7 @@ public class CursorController : MonoBehaviour
         shovelAnim = shovelObj.GetComponent<Animator>();
         canAnim = waterObj.GetComponent<Animator>();
         packetAnim = surfaceObj.GetComponent<Animator>();
+        seedAnim = seedObj.GetComponent<Animator>();
 
         //Misc. Variables
         GM = GameObject.Find("GardenObject").GetComponent<GardenManager>();
@@ -224,28 +228,7 @@ public class CursorController : MonoBehaviour
             //Shovel is out
             else if (toolList[curTool] == "Shovel")
             {
-                //This will be relocated so that the seed packet handles planting
-                //if (Input.GetButtonDown("A") && InGarden && currentCol == null && shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Idle 0"))
-                //{
-                //    if (GM.candyCount >= 250)
-                //    {
-                //        if (TextureOnTopOf() != "Sand")
-                //        {
-                //            shovelAnim.SetBool("IsDigging", true);
-                //            var euler = transform.eulerAngles;
-                //            euler.y = Random.Range(0.0f, 360.0f);
-                //            GameObject justIn = Instantiate(plantToSpawn, new Vector3(transform.GetChild(0).position.x, -.02f, transform.GetChild(0).position.z), Quaternion.identity);
-                //            justIn.transform.Rotate(euler);
-                //            justIn.GetComponent<Plant>().pNick += " (" + plantCounter + ")";
-                //            int price = justIn.GetComponent<Plant>().price;
-                //            plantCounter++;
-                //            GM.addPlant(justIn);
-                //            StartCoroutine(UpdateCandy(GM.candyCount, price));
-                //            GM.candyCount -= price;
-                //            candyText.text = GM.candyCount.ToString("N0");
-                //        }
-                //    }
-                //}
+                //Dig Hole
             }
             //Watering Can is out
             else if (toolList[curTool] == "Watering Can")
@@ -261,6 +244,7 @@ public class CursorController : MonoBehaviour
                 //A pressed, in garden, place the surface | **NEEDS OPTIMIZING**
                 if (Input.GetButton("A") && InGarden)
                 {
+                    //play anim
                     PlaceTexture(curTexture);
                 }
 
@@ -287,9 +271,14 @@ public class CursorController : MonoBehaviour
             //Seed Bag is out
             else if(toolList[curTool] == "Seed Bag")
             {
-                if(Input.GetButtonDown("A"))
+                if (Input.GetButtonDown("A") && (seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Idle") && currentCol == null))
                 {
+                    seedAnim.SetBool("IsPlacing", true);
                     SeedPlant(selectedSeed);
+                }
+                else if(Input.GetButtonDown("Y"))
+                {
+                    //switch seed
                 }
             }
 
@@ -325,7 +314,7 @@ public class CursorController : MonoBehaviour
 
         transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
 
-        if (!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig") && !toolPickerUp)
+        if (!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Place") && !toolPickerUp)
         {
             transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
         }
@@ -355,10 +344,10 @@ public class CursorController : MonoBehaviour
                 toolFX.Play();
                 packetAnim.SetBool("IsSwitchingOut", true);
             }
-            else if (cT == 2 && nT != 2)
+            else if (cT == 4 && nT != 4)
             {
                 toolFX.Play();
-                //seedAnim.SetBool("IsSwitchingOut", true);
+                seedAnim.SetBool("IsSwitchingOut", true);
             }
         }
         
@@ -395,7 +384,7 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = fullTR;
                 aText.text = "Plant Seed";
                 yText.text = "Change Seed";
-                //seedAnim.SetBool("IsSwitchingIn", true);
+                seedAnim.SetBool("IsSwitchingIn", true);
             }
         }
         else if(nT == 0 && cT != 0)
@@ -610,9 +599,13 @@ public class CursorController : MonoBehaviour
     //B was pressed, close UI or make tool Select
     private void BackButtonPressed()
     {
-        if(!profOBJ.activeSelf)
+        if(profOBJ.activeSelf)
         {
             profOBJ.SetActive(false);
+        }
+        else
+        {
+            ChangeTool(curTool,0);
         }
         //back out of tool if not select and UI wasn't up
     }

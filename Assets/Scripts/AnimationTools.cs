@@ -19,5 +19,9 @@ public class AnimationTools : StateMachineBehaviour
         {
             animator.SetBool("IsPouring", false);
         }
+        if (animator.gameObject.name == "Seed Bag")
+        {
+            animator.SetBool("IsPlacing", false);
+        }
     }
 }
