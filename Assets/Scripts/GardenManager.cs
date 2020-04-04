@@ -6,13 +6,25 @@ using UnityEngine;
 public class GardenManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    //private int level = 0;
+    public int level = 0;
+    public int totalXP = 0;
+    public int xpToLevel = 50;
+
     //public GameObject[] curPins;
     public int candyCount;
     public List<GameObject> curPlants;
     public float growthNeeded;
-
     private Text candyTxt;
+
+    //Grown/Resident Recorder
+    #region
+    //Plants
+    private bool grownRose;
+    private bool grownBluebell;
+
+    //Pinatas
+    private bool residentPinataX;
+    #endregion
 
     public void addPlant(GameObject plantToAdd)
     {
@@ -72,5 +84,30 @@ public class GardenManager : MonoBehaviour
     public void KillPlant(GameObject died)
     {
         curPlants.Remove(died);
+    }
+
+    public void AwardCheck(string s, int xp)
+    {
+        if(s == "Rose" && !grownRose)
+        {
+            grownRose = true;
+            totalXP += xp;
+            LevelUpCheck();
+        }
+    }
+
+    private void LevelUpCheck()
+    {
+        if(totalXP >= xpToLevel)
+        {
+            level++;
+            xpToLevel = (int)(xpToLevel * 1.2);
+        }
+    }
+
+    private void LevelingText()
+    {
+        //levelText.text = level;
+        //xpText.text = totalXP + " / " + xpToLevel;
     }
 }

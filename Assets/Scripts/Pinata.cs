@@ -29,10 +29,6 @@ public class Pinata : MonoBehaviour
     public List<string> rawReq;
     public List<Requirement> vRequirements = new List<Requirement>();
     public List<Requirement> rRequirements = new List<Requirement>();
-
-    public Color GREYCOLOR;
-    public Color REDCOLOR;
-
     private GardenManager GM;
     private GameObject plantmoveto;
     private Requirement curReq = null;
@@ -109,7 +105,7 @@ public class Pinata : MonoBehaviour
                 }
                 if (plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) > 0.7f)
                 {
-                    float step = 5 * Time.deltaTime; // calculate distance to move
+                    float step = 2.5f * Time.deltaTime; // calculate distance to move
                     transform.position = Vector3.MoveTowards(transform.position, plantmoveto.transform.position, step);
                 }
                 else if(plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) < 0.7f)
@@ -151,7 +147,7 @@ public class Pinata : MonoBehaviour
         while (ElapsedTime < TotalTime)
         {
             ElapsedTime += Time.deltaTime;
-            transform.GetComponent<Renderer>().material.color = Color.Lerp(GREYCOLOR, REDCOLOR, (ElapsedTime / TotalTime));
+            transform.GetComponent<Renderer>().material.color = Color.Lerp(Color.white, Color.yellow, (ElapsedTime / TotalTime));
             yield return null;
         }
     }

@@ -160,13 +160,13 @@ public class CursorController : MonoBehaviour
         }
         
         //Tool UI is Up
-        if (toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("Tool_UI_Switch_In") && toolUIAnim.GetBool("IsSwitchingIn") == false)
+        if (toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("UP_IDLE") && toolUIAnim.GetBool("IsSwitchingIn") == false)
         {
             ToolPickerIsUp();
         }
 
         //Nothing was moving, Tool Picker button pressed, open the picker
-        if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("Tool_UI_Switch_In"))
+        if (Input.GetButtonDown("X") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !packetAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !toolUIAnim.GetCurrentAnimatorStateInfo(0).IsName("UP_IDLE"))
         {
             toolPickerUp = true;
             toolUIAnim.SetBool("IsSwitchingIn", true);
