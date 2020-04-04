@@ -27,6 +27,7 @@ public class CursorController : MonoBehaviour
     private ParticleSystem toolFX;
     private GardenManager GM;
     private GameObject plantUI;
+    private GameObject pinataUI;
     private Image waterMask;
     private GameObject cam;
     private GameObject seedObj;
@@ -55,6 +56,7 @@ public class CursorController : MonoBehaviour
     private Sprite noYTR;
     private Sprite noATR;
     private Image topRightImg;
+    private Text residentTxt;
     private Text sellText;
     private Text itemNick;
     private Text candyText;
@@ -91,9 +93,11 @@ public class CursorController : MonoBehaviour
         sellText = GameObject.Find("sellText").GetComponent<Text>();
         itemNick = GameObject.Find("plantName").GetComponent<Text>();
         candyText = GameObject.Find("Candy Text").GetComponent<Text>();
+        residentTxt = GameObject.Find("Pinata Resident").GetComponent<Text>();
         pauseUI = GameObject.Find("Pause UI");
         arrowUI = GameObject.Find("Tool Picker Arrow");
         plantUI = GameObject.Find("PlantUI");
+        pinataUI = GameObject.Find("PinataUI");
         waterMask = GameObject.Find("water").GetComponent<Image>();
 
         //Tool Specific Variables
@@ -109,6 +113,7 @@ public class CursorController : MonoBehaviour
         sellText.gameObject.SetActive(false);
         waterFX.SetActive(false);
         plantUI.SetActive(false);
+        pinataUI.SetActive(false);
         pauseUI.SetActive(false);
 
         //Animation Variables
@@ -198,6 +203,20 @@ public class CursorController : MonoBehaviour
                     selectedObj = currentCol.gameObject;
                     //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
                 }
+                else if(Input.GetButton("A") && currentCol != null && currentCol.tag == "Pinata")
+                {
+                    pinataUI.SetActive(true);
+                    UIVisible = true;
+                    selectedObj = currentCol.gameObject;
+                    if(selectedObj.GetComponent<Pinata>().resident)
+                    {
+                        residentTxt.text = "Resident: Yes";
+                    }
+                    else
+                    {
+                        residentTxt.text = "Resident: No";
+                    }
+                }
                 //A is pressed and you are on a pinata
                 else if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Pinata")
                 {
@@ -274,7 +293,7 @@ public class CursorController : MonoBehaviour
             }
 
             //Plant Profile is up, update the info
-            if (UIVisible)
+            if (plantUI.activeSelf)
             {
                 waterMask.fillAmount = selectedObj.GetComponent<Plant>().waterLevel/200;
             }
@@ -534,6 +553,7 @@ public class CursorController : MonoBehaviour
         {
             UIVisible = false;
             plantUI.SetActive(false);
+            pinataUI.SetActive(false);
             selectedObj = null;
         }
     }
@@ -588,8 +608,9 @@ public class CursorController : MonoBehaviour
     //B was pressed, close UI or make tool Select
     private void BackButtonPressed()
     {
-        if(plantUI.activeSelf)
+        if(plantUI.activeSelf || pinataUI.activeSelf)
         {
+            pinataUI.SetActive(false);
             plantUI.SetActive(false);
         }
         else if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
@@ -667,6 +688,12 @@ public class CursorController : MonoBehaviour
             Pickup PS = currentCol.GetComponent<Pickup>();
             sellText.gameObject.SetActive(true);
             sellText.text = "Sell for " + PS.candyValue + " candy (Press A)";
+            currentCol = collision;
+        }
+        else if (collision.gameObject.tag == "Pinata" && toolList[curTool] == "Select")
+        {
+            topRightImg.sprite = noYTR;
+            aText.text = "Select Pinata";
             currentCol = collision;
         }
         else if (collision.gameObject.name == "GardenObject")
