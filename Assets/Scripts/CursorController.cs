@@ -26,15 +26,14 @@ public class CursorController : MonoBehaviour
     private string[] toolList = { "Select", "Shovel", "Watering Can", "Surface Packet", "Seed Bag"};
     private ParticleSystem toolFX;
     private GardenManager GM;
+    private GameObject plantUI;
+    private Image waterMask;
     private GameObject cam;
     private GameObject seedObj;
     private GameObject shovelObj;
     private GameObject waterObj;
     private GameObject surfaceObj;
     private GameObject waterFX;
-    private GameObject profOBJ;
-    private GameObject lifeArrow;
-    private GameObject waterArrow;
     private GameObject plantToSpawn;
     private GameObject selectedObj;
     private GameObject pauseUI;
@@ -59,8 +58,6 @@ public class CursorController : MonoBehaviour
     private Text sellText;
     private Text itemNick;
     private Text candyText;
-    private Text itemType;
-    private Text ageText;
     private Text aText;
     private Text yText;
     #endregion
@@ -92,16 +89,12 @@ public class CursorController : MonoBehaviour
         aText = GameObject.Find("A_TEXT").GetComponent<Text>();
         yText = GameObject.Find("Y_TEXT").GetComponent<Text>();
         sellText = GameObject.Find("sellText").GetComponent<Text>();
-        itemNick = GameObject.Find("itemName").GetComponent<Text>();
-        itemType = GameObject.Find("itemType").GetComponent<Text>();
-        ageText = GameObject.Find("ageText").GetComponent<Text>();
+        itemNick = GameObject.Find("plantName").GetComponent<Text>();
         candyText = GameObject.Find("Candy Text").GetComponent<Text>();
-        profOBJ = GameObject.Find("profObjBack");
-        lifeArrow = GameObject.Find("lifeArrow");
-        waterArrow = GameObject.Find("waterArrow");
         pauseUI = GameObject.Find("Pause UI");
         arrowUI = GameObject.Find("Tool Picker Arrow");
-        profOBJ = GameObject.Find("profObjBack");
+        plantUI = GameObject.Find("PlantUI");
+        waterMask = GameObject.Find("water").GetComponent<Image>();
 
         //Tool Specific Variables
         waterFX = GameObject.Find("WaterFX");
@@ -115,7 +108,7 @@ public class CursorController : MonoBehaviour
         //Disable Relevant Objects
         sellText.gameObject.SetActive(false);
         waterFX.SetActive(false);
-        profOBJ.SetActive(false);
+        plantUI.SetActive(false);
         pauseUI.SetActive(false);
 
         //Animation Variables
@@ -200,12 +193,10 @@ public class CursorController : MonoBehaviour
                 //A is pressed and you are on a plant
                 if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Plant")
                 {
-                    profOBJ.SetActive(true);
+                    plantUI.SetActive(true);
                     UIVisible = true;
                     selectedObj = currentCol.gameObject;
-                    ageText.text = selectedObj.GetComponent<Plant>().getAge();
-                    itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-                    itemType.text = selectedObj.GetComponent<Plant>().pName;
+                    //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
                 }
                 //A is pressed and you are on a pinata
                 else if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Pinata")
@@ -285,9 +276,7 @@ public class CursorController : MonoBehaviour
             //Plant Profile is up, update the info
             if (UIVisible)
             {
-                ageText.text = selectedObj.GetComponent<Plant>().getAge();
-                lifeArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2((97 + (selectedObj.GetComponent<Plant>().getLifeLerp() * -200f)), -43);
-                waterArrow.GetComponent<RectTransform>().anchoredPosition = new Vector2(((selectedObj.GetComponent<Plant>().waterLevel - 100f)), -159);
+                waterMask.fillAmount = selectedObj.GetComponent<Plant>().waterLevel/200;
             }
         }
     }
@@ -544,7 +533,7 @@ public class CursorController : MonoBehaviour
         if (selectedObj == died)
         {
             UIVisible = false;
-            profOBJ.SetActive(false);
+            plantUI.SetActive(false);
             selectedObj = null;
         }
     }
@@ -599,11 +588,11 @@ public class CursorController : MonoBehaviour
     //B was pressed, close UI or make tool Select
     private void BackButtonPressed()
     {
-        if(profOBJ.activeSelf)
+        if(plantUI.activeSelf)
         {
-            profOBJ.SetActive(false);
+            plantUI.SetActive(false);
         }
-        else
+        else if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
         {
             ChangeTool(curTool,0);
         }
@@ -622,12 +611,10 @@ public class CursorController : MonoBehaviour
         }
         if (currentCol != null && currentCol.tag == "Plant") //water can stuff
         {
-            profOBJ.SetActive(true);
+            plantUI.SetActive(true);
             UIVisible = true;
             selectedObj = currentCol.gameObject;
-            ageText.text = selectedObj.GetComponent<Plant>().getAge();
-            itemNick.text = selectedObj.GetComponent<Plant>().pNick;
-            itemType.text = selectedObj.GetComponent<Plant>().pName;
+            //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
             selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
 
         }
