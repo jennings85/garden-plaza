@@ -14,6 +14,7 @@ public class AnimationTools : StateMachineBehaviour
         if (animator.gameObject.name == "Shovel")
         {
             animator.SetBool("IsDigging", false);
+            animator.SetBool("IsTapping", false);
         }
         if (animator.gameObject.name == "Can")
         {

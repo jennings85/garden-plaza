@@ -233,7 +233,17 @@ public class CursorController : MonoBehaviour
             //Shovel is out
             else if (toolList[curTool] == "Shovel")
             {
-                //Dig Hole
+                if (Input.GetButtonDown("Y") && shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Idle") && currentCol != null && currentCol.tag == "Plant")
+                {
+                    if(currentCol.GetComponent<Plant>().getGrowth() <= .66f)
+                    {
+                        StartCoroutine(TapPlantDeath());
+                    }
+                    else
+                    {
+                        shovelAnim.SetBool("IsTapping", true);
+                    }
+                }
             }
             //Watering Can is out
             else if (toolList[curTool] == "Watering Can")
@@ -276,7 +286,6 @@ public class CursorController : MonoBehaviour
             //Seed Bag is out
             else if(toolList[curTool] == "Seed Bag")
             {
-                Debug.Log(currentCol);
                 if (Input.GetButtonDown("A") && (seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Idle") && currentCol == null))
                 {
                     seedAnim.SetBool("IsPlacing", true);
@@ -299,13 +308,9 @@ public class CursorController : MonoBehaviour
     //Currently fixed update is used to 
     void FixedUpdate()
     {
-
-        //reading the input:
         float horizontalAxis = Input.GetAxis("Horizontal");
         float verticalAxis = Input.GetAxis("Vertical");
-
         var camera = Camera.main;
-
         var forward = camera.transform.forward;
         var right = camera.transform.right;
 
@@ -318,7 +323,7 @@ public class CursorController : MonoBehaviour
 
         transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
 
-        if (!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Dig") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Place") && !toolPickerUp)
+        if (!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Tap") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Place") && !toolPickerUp)
         {
             transform.Translate(desiredMoveDirection * speed * Time.deltaTime);
         }
@@ -610,7 +615,7 @@ public class CursorController : MonoBehaviour
             pinataUI.SetActive(false);
             plantUI.SetActive(false);
         }
-        else if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
+        else if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
         {
             ChangeTool(curTool,0);
         }
@@ -638,6 +643,13 @@ public class CursorController : MonoBehaviour
         }
     }
 
+    IEnumerator TapPlantDeath()
+    {
+        
+        shovelAnim.SetBool("IsTapping", true);
+        yield return new WaitForSeconds(1);
+        currentCol.GetComponent<Plant>().GoodDeath();
+    }
     private void SeedPlant(string seedToPlace)
     {
         if(TextureOnTopOf() != "Sand")
@@ -675,6 +687,11 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = noYTR;
                 aText.text = "View Plant";
             }
+            if (toolList[curTool] == "Shovel")
+            {
+                topRightImg.sprite = fullTR;
+                yText.text = "Tap Plant";
+            }
             currentCol = collision;
         }
         else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
@@ -709,6 +726,11 @@ public class CursorController : MonoBehaviour
             {
                 topRightImg.sprite = noATR;
                 aText.text = "";
+            }
+            if (toolList[curTool] == "Shovel")
+            {
+                topRightImg.sprite = noYTR;
+                yText.text = "";
             }
         }
         else if (collision.gameObject.tag == "Pinata")

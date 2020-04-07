@@ -55,9 +55,7 @@ public class Plant : MonoBehaviour
         }
         else //death by age
         {
-            Instantiate(rewardToSpawn, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.identity);
-            CC.InformedDeath(gameObject);
-            Destroy(gameObject);
+            GoodDeath();
         }
     }
 
@@ -78,6 +76,13 @@ public class Plant : MonoBehaviour
     public void Killed()
     {
         GM.KillPlant(gameObject);
+        CC.InformedDeath(gameObject);
+        Destroy(gameObject);
+    }
+
+    public void GoodDeath()
+    {
+        Instantiate(rewardToSpawn, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.identity);
         CC.InformedDeath(gameObject);
         Destroy(gameObject);
     }
