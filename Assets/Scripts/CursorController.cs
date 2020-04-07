@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine;
 
 public class CursorController : MonoBehaviour
@@ -7,7 +8,6 @@ public class CursorController : MonoBehaviour
     //Initaliaze Variables
     #region
     private bool InGarden = true;
-    private bool UIVisible = false;
     private bool paused = false;
     private bool toolPickerUp = false;
     private bool justPaused = false;
@@ -56,7 +56,7 @@ public class CursorController : MonoBehaviour
     private Sprite noYTR;
     private Sprite noATR;
     private Image topRightImg;
-    private Text residentTxt;
+    private TMPro.TextMeshProUGUI residentTxt;
     private Text sellText;
     private Text itemNick;
     private Text candyText;
@@ -93,11 +93,11 @@ public class CursorController : MonoBehaviour
         sellText = GameObject.Find("sellText").GetComponent<Text>();
         itemNick = GameObject.Find("plantName").GetComponent<Text>();
         candyText = GameObject.Find("Candy Text").GetComponent<Text>();
-        residentTxt = GameObject.Find("Pinata Resident").GetComponent<Text>();
+        residentTxt = GameObject.Find("PinataCanvas/PinataUI/prText").GetComponent<TMPro.TextMeshProUGUI>();
         pauseUI = GameObject.Find("Pause UI");
         arrowUI = GameObject.Find("Tool Picker Arrow");
-        plantUI = GameObject.Find("PlantUI");
-        pinataUI = GameObject.Find("PinataUI");
+        plantUI = GameObject.Find("PlantCanvas");
+        pinataUI = GameObject.Find("PinataCanvas");
         waterMask = GameObject.Find("water").GetComponent<Image>();
 
         //Tool Specific Variables
@@ -196,34 +196,29 @@ public class CursorController : MonoBehaviour
             if (toolList[curTool] == "Select")
             {
                 //A is pressed and you are on a plant
-                if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Plant")
+                if (Input.GetButtonDown("A") && currentCol != null && currentCol.tag == "Plant")
                 {
                     plantUI.SetActive(true);
-                    UIVisible = true;
                     selectedObj = currentCol.gameObject;
-                    //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
+                    plantUI.transform.position = selectedObj.transform.position;
                 }
-                else if(Input.GetButton("A") && currentCol != null && currentCol.tag == "Pinata")
+                else if(Input.GetButtonDown("A") && currentCol != null && currentCol.tag == "Pinata")
                 {
                     pinataUI.SetActive(true);
-                    UIVisible = true;
                     selectedObj = currentCol.gameObject;
-                    if(selectedObj.GetComponent<Pinata>().resident)
+                    pinataUI.transform.position = selectedObj.transform.position;
+                    bool isResident = selectedObj.GetComponent<Pinata>().resident;
+                    if (isResident)
                     {
                         residentTxt.text = "Resident: Yes";
                     }
-                    else
+                    else if(!isResident)
                     {
                         residentTxt.text = "Resident: No";
                     }
                 }
-                //A is pressed and you are on a pinata
-                else if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Pinata")
-                {
-                    //pinata time
-                }
                 //A is pressed and you are on a pickup
-                else if (Input.GetButton("A") && currentCol != null && currentCol.tag == "Pickup")
+                else if (Input.GetButtonDown("A") && currentCol != null && currentCol.tag == "Pickup")
                 {
                     Pickup PS = currentCol.GetComponent<Pickup>();
                     Destroy(currentCol.gameObject);
@@ -281,6 +276,7 @@ public class CursorController : MonoBehaviour
             //Seed Bag is out
             else if(toolList[curTool] == "Seed Bag")
             {
+                Debug.Log(currentCol);
                 if (Input.GetButtonDown("A") && (seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Idle") && currentCol == null))
                 {
                     seedAnim.SetBool("IsPlacing", true);
@@ -293,7 +289,7 @@ public class CursorController : MonoBehaviour
             }
 
             //Plant Profile is up, update the info
-            if (plantUI.activeSelf)
+            if (plantUI.activeSelf && !pinataUI.activeSelf)
             {
                 waterMask.fillAmount = selectedObj.GetComponent<Plant>().waterLevel/200;
             }
@@ -329,6 +325,8 @@ public class CursorController : MonoBehaviour
 
         float h = 115 * Input.GetAxis("axisName") * Time.deltaTime;
         cam.transform.Rotate(0, h, 0);
+        plantUI.transform.Rotate(0, h, 0);
+        pinataUI.transform.Rotate(0, h, 0);
     }
 
     //Ran if X is pressed outside pause and no moving animation playing
@@ -551,7 +549,6 @@ public class CursorController : MonoBehaviour
     {
         if (selectedObj == died)
         {
-            UIVisible = false;
             plantUI.SetActive(false);
             pinataUI.SetActive(false);
             selectedObj = null;
@@ -633,7 +630,7 @@ public class CursorController : MonoBehaviour
         if (currentCol != null && currentCol.tag == "Plant") //water can stuff
         {
             plantUI.SetActive(true);
-            UIVisible = true;
+            plantUI.transform.position = currentCol.transform.position;
             selectedObj = currentCol.gameObject;
             //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
             selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
@@ -707,6 +704,15 @@ public class CursorController : MonoBehaviour
         if (collision.gameObject.tag == "Plant")
         {
             //Debug.Log("Exited: " +collision.gameObject.name);
+            currentCol = null;
+            if (toolList[curTool] == "Select")
+            {
+                topRightImg.sprite = noATR;
+                aText.text = "";
+            }
+        }
+        else if (collision.gameObject.tag == "Pinata")
+        {
             currentCol = null;
             if (toolList[curTool] == "Select")
             {

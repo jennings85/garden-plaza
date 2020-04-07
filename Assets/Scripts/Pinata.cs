@@ -10,6 +10,7 @@ public class Requirement
     public int count;
     public bool complete;
 
+
     public Requirement(string vr, string t, string i, int c)
     {
         visRes = vr;
@@ -32,6 +33,8 @@ public class Pinata : MonoBehaviour
     private GardenManager GM;
     private GameObject plantmoveto;
     private Requirement curReq = null;
+    public Material startMat;
+    public Material endMat;
 
     void Start()
     {
@@ -142,13 +145,6 @@ public class Pinata : MonoBehaviour
 
     public IEnumerator BecomeResident()
     {
-        float ElapsedTime = 0.0f;
-        float TotalTime = 5.00f;
-        while (ElapsedTime < TotalTime)
-        {
-            ElapsedTime += Time.deltaTime;
-            transform.GetComponent<Renderer>().material.color = Color.Lerp(Color.white, Color.yellow, (ElapsedTime / TotalTime));
-            yield return null;
-        }
+        yield return null;
     }
 }
