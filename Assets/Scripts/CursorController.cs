@@ -508,47 +508,6 @@ public class CursorController : MonoBehaviour
         }
     }
 
-    //Player left the garden, update the cursor color
-    public IEnumerator LeftGarden()
-    {
-        float ElapsedTime = 0.0f;
-        float TotalTime = 0.25f;
-        while (ElapsedTime < TotalTime)
-        {
-            ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.red, Color.gray, (ElapsedTime / TotalTime));
-            yield return null;
-        }
-    }
-
-    //Player entered the garden, update the cursor color
-    public IEnumerator EnterGarden()
-    {
-        float ElapsedTime = 0.0f;
-        float TotalTime = 0.25f;
-        while (ElapsedTime < TotalTime)
-        {
-            ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.gray, Color.red, (ElapsedTime / TotalTime));
-            yield return null;
-        }
-    }
-    //Candy is to be subtracted, update visuals gracefully
-    public IEnumerator UpdateCandy(int startCount, int sub)
-    {
-        float lerp = 0.0f;
-        float duration = 0.5f;
-        int curCount = startCount;
-        int endCandy = (startCount - sub);
-        while (lerp < duration)
-        {
-            lerp += Time.deltaTime;
-            curCount = (int)Mathf.Lerp(startCount, endCandy, lerp);
-            candyText.text = curCount.ToString("N0");
-            yield return null;
-        }
-        candyText.text = endCandy.ToString("N0");
-    }
     //Plant died, make sure UI updates properly
     public void InformedDeath(GameObject died)
     {
@@ -559,6 +518,7 @@ public class CursorController : MonoBehaviour
             selectedObj = null;
         }
     }
+
     //The Tool Picker is up, allow interaction and tool selection
     private void ToolPickerIsUp()
     {
@@ -607,6 +567,7 @@ public class CursorController : MonoBehaviour
         }
         return;
     }
+
     //B was pressed, close UI or make tool Select
     private void BackButtonPressed()
     {
@@ -621,6 +582,7 @@ public class CursorController : MonoBehaviour
         }
         //back out of tool if not select and UI wasn't up
     }
+
     //Watering can is pouring, update the particles and check if over plant (event. pinata too)
     private void Watering()
     {
@@ -643,13 +605,58 @@ public class CursorController : MonoBehaviour
         }
     }
 
-    IEnumerator TapPlantDeath()
+    //Plant is tapped after growth and should release bud and die
+    public IEnumerator TapPlantDeath()
     {
         
         shovelAnim.SetBool("IsTapping", true);
         yield return new WaitForSeconds(1);
         currentCol.GetComponent<Plant>().GoodDeath();
     }
+    //Player left the garden, update the cursor color
+    public IEnumerator LeftGarden()
+    {
+        float ElapsedTime = 0.0f;
+        float TotalTime = 0.25f;
+        while (ElapsedTime < TotalTime)
+        {
+            ElapsedTime += Time.deltaTime;
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.red, Color.gray, (ElapsedTime / TotalTime));
+            yield return null;
+        }
+    }
+
+    //Player entered the garden, update the cursor color
+    public IEnumerator EnterGarden()
+    {
+        float ElapsedTime = 0.0f;
+        float TotalTime = 0.25f;
+        while (ElapsedTime < TotalTime)
+        {
+            ElapsedTime += Time.deltaTime;
+            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.gray, Color.red, (ElapsedTime / TotalTime));
+            yield return null;
+        }
+    }
+
+    //Candy is to be subtracted, update visuals gracefully
+    public IEnumerator UpdateCandy(int startCount, int sub)
+    {
+        float lerp = 0.0f;
+        float duration = 0.5f;
+        int curCount = startCount;
+        int endCandy = (startCount - sub);
+        while (lerp < duration)
+        {
+            lerp += Time.deltaTime;
+            curCount = (int)Mathf.Lerp(startCount, endCandy, lerp);
+            candyText.text = curCount.ToString("N0");
+            yield return null;
+        }
+        candyText.text = endCandy.ToString("N0");
+    }
+
+    //Check if not on sand and then plant seed selected
     private void SeedPlant(string seedToPlace)
     {
         if(TextureOnTopOf() != "Sand")
@@ -676,6 +683,8 @@ public class CursorController : MonoBehaviour
             //on sand, inform user
         }
     }
+
+
     //Below functions are standard functions that involve colliders and quitting the game
     void OnTriggerEnter(Collider collision)
     {
@@ -754,7 +763,7 @@ public class CursorController : MonoBehaviour
             InGarden = false;
             StartCoroutine(LeftGarden());
         }
-    }
+    } 
     private void OnTriggerStay(Collider collision)
     {
         if (collision.gameObject.tag == "Plant")

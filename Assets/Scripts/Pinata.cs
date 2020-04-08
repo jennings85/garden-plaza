@@ -22,6 +22,7 @@ public class Requirement
 }
 public class Pinata : MonoBehaviour
 {
+    public bool inCour;
     public string breed;
     public bool ableToVisit;
     public bool resident;
@@ -32,6 +33,7 @@ public class Pinata : MonoBehaviour
     public List<Requirement> rRequirements = new List<Requirement>();
     private GardenManager GM;
     private GameObject plantmoveto;
+    private Vector3 objectMoveTo;
     private Requirement curReq = null;
     public Material startMat;
     public Material endMat;
@@ -108,13 +110,11 @@ public class Pinata : MonoBehaviour
                 }
                 if (plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) > 0.7f)
                 {
-                    float step = 2.5f * Time.deltaTime; // calculate distance to move
+                    float step = 2f * Time.deltaTime; // calculate distance to move
                     transform.position = Vector3.MoveTowards(transform.position, plantmoveto.transform.position, step);
                 }
                 else if(plantmoveto != null && Vector3.Distance(transform.position, plantmoveto.transform.position) < 0.7f)
                 {
-                    Debug.Log("ATE:" + plantmoveto.name);
-                    Debug.Log(curReq.count);
                     plantmoveto.GetComponent<Plant>().Killed();
                     plantmoveto = null;
                     inMotionAlready = false;
@@ -141,10 +141,40 @@ public class Pinata : MonoBehaviour
                 }
             }
         }
+        else //START IDLE
+        {
+            if (inMotionAlready)
+            {
+                if (Vector3.Distance(transform.position, objectMoveTo) > 0.1f)
+                {
+                    float step = 2f * Time.deltaTime; // calculate distance to move
+                    Debug.Log(objectMoveTo.x + ", " + objectMoveTo.z);
+                    transform.position = Vector3.MoveTowards(transform.position, objectMoveTo, step);
+                }
+                else if (Vector3.Distance(transform.position, objectMoveTo) < 0.1f)
+                {
+                    inMotionAlready = false;
+                }
+            }
+            else if(!inCour)
+            {
+                inCour = true;
+                StartCoroutine(WaitAndMove(Random.Range(3, 10)));
+            }
+        }
     }
 
     public IEnumerator BecomeResident()
     {
+        inMotionAlready = false;
         yield return null;
+    }
+
+    private IEnumerator WaitAndMove(float randTime)
+    {
+        yield return new WaitForSeconds(randTime);
+        inMotionAlready = true;
+        objectMoveTo = new Vector3(Random.Range(-10, 10), transform.position.y, Random.Range(-10, 10));
+        inCour = false;
     }
 }

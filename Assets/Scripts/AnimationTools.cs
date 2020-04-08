@@ -9,20 +9,23 @@ public class AnimationTools : StateMachineBehaviour
     //machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.SetBool("IsSwitchingOut", false);
-        animator.SetBool("IsSwitchingIn", false);
-        if (animator.gameObject.name == "Shovel")
+        if(animator.gameObject.name != "Rose(Clone)")
         {
-            animator.SetBool("IsDigging", false);
-            animator.SetBool("IsTapping", false);
-        }
-        if (animator.gameObject.name == "Can")
-        {
-            animator.SetBool("IsPouring", false);
-        }
-        if (animator.gameObject.name == "Seed Bag")
-        {
-            animator.SetBool("IsPlacing", false);
+            animator.SetBool("IsSwitchingOut", false);
+            animator.SetBool("IsSwitchingIn", false);
+            if (animator.gameObject.name == "Shovel")
+            {
+                animator.SetBool("IsDigging", false);
+                animator.SetBool("IsTapping", false);
+            }
+            if (animator.gameObject.name == "Can")
+            {
+                animator.SetBool("IsPouring", false);
+            }
+            if (animator.gameObject.name == "Seed Bag")
+            {
+                animator.SetBool("IsPlacing", false);
+            }
         }
     }
 }
