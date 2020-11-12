@@ -20,6 +20,7 @@ public class CursorController : MonoBehaviour
     private float[] textureValues = new float[3];
     private float[,,] originalTerrain;
     private float speed = 10;
+    private float cursorSize = 1;
     private float aim_angle = 0;
     private string selectedSeed = "Rose";
     private string curTexture = "Grass";
@@ -621,7 +622,10 @@ public class CursorController : MonoBehaviour
         while (ElapsedTime < TotalTime)
         {
             ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.red, Color.gray, (ElapsedTime / TotalTime));
+            for (int i = 0; i < 8; i++)
+            {
+                transform.GetChild(0).GetChild(i).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.red, Color.gray, (ElapsedTime / TotalTime));
+            }
             yield return null;
         }
     }
@@ -634,9 +638,29 @@ public class CursorController : MonoBehaviour
         while (ElapsedTime < TotalTime)
         {
             ElapsedTime += Time.deltaTime;
-            transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.gray, Color.red, (ElapsedTime / TotalTime));
+            for(int i=0;i<8;i++)
+            {
+                transform.GetChild(0).GetChild(i).GetChild(0).GetComponent<Renderer>().material.color = Color.Lerp(Color.gray, Color.red, (ElapsedTime / TotalTime));
+            }
             yield return null;
         }
+    }
+
+    //Scale the cursor based on selectedObj Size
+    public IEnumerator ScaleCursor(float newSize)
+    {
+        float ElapsedTime = 0.0f;
+        float TotalTime = 0.25f;
+        while (ElapsedTime < TotalTime)
+        {
+            ElapsedTime += Time.deltaTime;
+            for (int i = 0; i < 8; i++)
+            {
+                transform.GetChild(0).GetChild(i).GetChild(0).localPosition = new Vector3(0,0,Mathf.Lerp(cursorSize, newSize, (ElapsedTime / TotalTime)));
+            }
+            yield return null;
+        }
+        cursorSize = newSize;
     }
 
     //Candy is to be subtracted, update visuals gracefully
@@ -690,6 +714,7 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
+            StartCoroutine(ScaleCursor(collision.gameObject.GetComponent<Plant>().size));
             //Debug.Log("Entered: " +collision.gameObject.name);
             if (toolList[curTool] == "Select")
             {
@@ -729,6 +754,7 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
+            StartCoroutine(ScaleCursor(1));
             //Debug.Log("Exited: " +collision.gameObject.name);
             currentCol = null;
             if (toolList[curTool] == "Select")

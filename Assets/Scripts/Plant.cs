@@ -11,6 +11,7 @@ public class Plant : MonoBehaviour
     public string pName;
     public string pNick;
     public string pType;
+    public float size;
     public int price;
     public int growthStages;
     //0 -dead AF, 25 - almost dead, 50 low, 75 fine, 100 perfect, 125 fine, 150, too much, 175 almost dead, 200 dead

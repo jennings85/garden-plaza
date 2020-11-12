@@ -54,6 +54,7 @@ MonoBehaviour:
   pName: Rose
   pNick: Rose
   pType: Rose
+  size: 3
   price: 250
   growthStages: 5
   waterLevel: 100
