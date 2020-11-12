@@ -29,13 +29,13 @@ public class CursorController : MonoBehaviour
     private GardenManager GM;
     private GameObject plantUI;
     private GameObject pinataUI;
-    private Image waterMask;
     private GameObject cam;
     private GameObject seedObj;
     private GameObject shovelObj;
     private GameObject waterObj;
     private GameObject surfaceObj;
     private GameObject waterFX;
+    private GameObject drops;
     private GameObject plantToSpawn;
     private GameObject selectedObj;
     private GameObject pauseUI;
@@ -99,7 +99,7 @@ public class CursorController : MonoBehaviour
         arrowUI = GameObject.Find("Tool Picker Arrow");
         plantUI = GameObject.Find("PlantCanvas");
         pinataUI = GameObject.Find("PinataCanvas");
-        waterMask = GameObject.Find("water").GetComponent<Image>();
+        drops = GameObject.Find("WaterDrops");
 
         //Tool Specific Variables
         waterFX = GameObject.Find("WaterFX");
@@ -197,13 +197,14 @@ public class CursorController : MonoBehaviour
             if (toolList[curTool] == "Select")
             {
                 //A is pressed and you are on a plant
-                if (Input.GetButtonDown("A") && currentCol != null && currentCol.tag == "Plant")
+                if (currentCol != null && currentCol.tag == "Plant")
                 {
                     plantUI.SetActive(true);
                     selectedObj = currentCol.gameObject;
                     plantUI.transform.position = selectedObj.transform.position;
+                    updateDrops();
                 }
-                else if(Input.GetButtonDown("A") && currentCol != null && currentCol.tag == "Pinata")
+                else if (currentCol != null && currentCol.tag == "Pinata")
                 {
                     pinataUI.SetActive(true);
                     selectedObj = currentCol.gameObject;
@@ -213,7 +214,7 @@ public class CursorController : MonoBehaviour
                     {
                         residentTxt.text = "Resident: Yes";
                     }
-                    else if(!isResident)
+                    else if (!isResident)
                     {
                         residentTxt.text = "Resident: No";
                     }
@@ -230,12 +231,14 @@ public class CursorController : MonoBehaviour
                     topRightImg.sprite = noATR;
                     aText.text = "";
                 }
-                //else if(currentCol == null)
-                //{
-                 //   plantUI.SetActive(true);
-                  //  selectedObj = currentCol.gameObject;
-                   // plantUI.transform.position = selectedObj.transform.position;
-                //}
+                else if (plantUI.activeSelf && currentCol == null)
+                {
+                    plantUI.SetActive(false);
+                }
+                else if (pinataUI.activeSelf && currentCol == null)
+                {
+                    pinataUI.SetActive(false);
+                }
             }
             //Shovel is out
             else if (toolList[curTool] == "Shovel")
@@ -307,7 +310,27 @@ public class CursorController : MonoBehaviour
             //Plant Profile is up, update the info
             if (plantUI.activeSelf && !pinataUI.activeSelf)
             {
-                waterMask.fillAmount = selectedObj.GetComponent<Plant>().waterLevel/200;
+                float wL=selectedObj.GetComponent<Plant>().waterLevel;
+                if (wL < 40)
+                {
+                    drops.transform.GetChild(0).localScale = new Vector3(wL/40, wL / 40, 0);
+                }
+                else if (wL < 80)
+                {
+                    drops.transform.GetChild(1).localScale = new Vector3((wL - 40) / 40, (wL - 40) / 40, 0);
+                }
+                else if (wL < 120)
+                {
+                    drops.transform.GetChild(2).localScale = new Vector3((wL - 80) / 40, (wL - 80) / 40, 0);
+                }
+                else if (wL < 160)
+                {
+                    drops.transform.GetChild(3).localScale = new Vector3((wL - 120) / 40, (wL - 120) / 40, 0);
+                }
+                else if (wL < 200)
+                {
+                    drops.transform.GetChild(4).localScale = new Vector3((wL - 160) / 40, (wL - 160) / 40, 0);
+                }
             }
         }
     }
@@ -618,8 +641,48 @@ public class CursorController : MonoBehaviour
             selectedObj = currentCol.gameObject;
             //itemNick.text = selectedObj.GetComponent<Plant>().pNick;
             selectedObj.GetComponent<Plant>().waterLevel += Time.deltaTime * waterStrength;
-
         }
+    }
+
+    public void updateDrops()
+    {
+        float wL = selectedObj.GetComponent<Plant>().waterLevel;
+        if (wL < 40)
+        {
+            drops.transform.GetChild(1).localScale = new Vector3(0,0,0);
+            drops.transform.GetChild(2).localScale = new Vector3(0,0,0);
+            drops.transform.GetChild(3).localScale = new Vector3(0,0,0);
+            drops.transform.GetChild(4).localScale = new Vector3(0,0,0);
+        }
+        else if (wL < 80)
+        {
+            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(2).localScale = new Vector3(0, 0, 0);
+            drops.transform.GetChild(3).localScale = new Vector3(0, 0, 0);
+            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
+        }
+        else if (wL < 120)
+        {
+            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(3).localScale = new Vector3(0, 0, 0);
+            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
+        }
+        else if (wL < 160)
+        {
+            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(2).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
+        }
+        else if (wL < 200)
+        {
+            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(2).localScale = new Vector3(1, 1, 1);
+            drops.transform.GetChild(3).localScale = new Vector3(1, 1, 1);
+        }
+        return;
     }
 
     //Plant is tapped after growth and should release bud and die
