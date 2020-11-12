@@ -20,7 +20,7 @@ public class CursorController : MonoBehaviour
     private float[] textureValues = new float[3];
     private float[,,] originalTerrain;
     private float speed = 10;
-    private float cursorSize = 1;
+    private float cursorSize = -1;
     private float aim_angle = 0;
     private string selectedSeed = "Rose";
     private string curTexture = "Grass";
@@ -230,6 +230,12 @@ public class CursorController : MonoBehaviour
                     topRightImg.sprite = noATR;
                     aText.text = "";
                 }
+                //else if(currentCol == null)
+                //{
+                 //   plantUI.SetActive(true);
+                  //  selectedObj = currentCol.gameObject;
+                   // plantUI.transform.position = selectedObj.transform.position;
+                //}
             }
             //Shovel is out
             else if (toolList[curTool] == "Shovel")
@@ -322,7 +328,17 @@ public class CursorController : MonoBehaviour
 
         var desiredMoveDirection = forward * verticalAxis + right * horizontalAxis;
 
-        transform.GetChild(0).Rotate(new Vector3(0, 100 * Time.deltaTime, 0));
+        float cursorSpeed;
+        if(cursorSize==-1)
+        {
+            cursorSpeed = 100;
+        }
+        else
+        {
+            cursorSpeed = 100 / (cursorSize/2);
+        }
+
+        transform.GetChild(0).Rotate(new Vector3(0, cursorSpeed * Time.deltaTime, 0));
 
         if (!shovelAnim.GetCurrentAnimatorStateInfo(0).IsName("Shovel_Tap") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Place") && !toolPickerUp)
         {
@@ -663,6 +679,28 @@ public class CursorController : MonoBehaviour
         cursorSize = newSize;
     }
 
+    //StickCursor
+    public IEnumerator StickCursor(Vector3 pos)
+    {
+        float ElapsedTime = 0.0f;
+        float TotalTime = 5.75f;
+        while (ElapsedTime < TotalTime)
+        {
+            if(ElapsedTime >= .2f && ((Mathf.Abs(Input.GetAxis("Horizontal")) > .9f) || (Mathf.Abs(Input.GetAxis("Vertical")) > .9f)))
+            {
+                yield break;
+            }
+
+            ElapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, pos, (ElapsedTime / TotalTime));
+            if(transform.position == pos)
+            {
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
     //Candy is to be subtracted, update visuals gracefully
     public IEnumerator UpdateCandy(int startCount, int sub)
     {
@@ -715,6 +753,7 @@ public class CursorController : MonoBehaviour
         if (collision.gameObject.tag == "Plant")
         {
             StartCoroutine(ScaleCursor(collision.gameObject.GetComponent<Plant>().size));
+            StartCoroutine(StickCursor(collision.gameObject.transform.position));
             //Debug.Log("Entered: " +collision.gameObject.name);
             if (toolList[curTool] == "Select")
             {
@@ -754,7 +793,7 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
-            StartCoroutine(ScaleCursor(1));
+            StartCoroutine(ScaleCursor(-1));
             //Debug.Log("Exited: " +collision.gameObject.name);
             currentCol = null;
             if (toolList[curTool] == "Select")
