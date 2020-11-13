@@ -6,6 +6,7 @@ public class Pickup : MonoBehaviour
 {
     public string pickupName;
     public int candyValue;
+    public int size;
 
     public float startTime;
     public float endTime = 180; //dies after this time

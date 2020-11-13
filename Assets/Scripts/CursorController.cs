@@ -17,6 +17,9 @@ public class CursorController : MonoBehaviour
     private int curTool = 0;
     private int selectedTool = 0;
     private int waterStrength = 20;
+    private float waveMin = -85f;
+    private float waveMax = 47.9f;
+    private float curWave = -85f;
     private float[] textureValues = new float[3];
     private float[,,] originalTerrain;
     private float speed = 10;
@@ -35,7 +38,7 @@ public class CursorController : MonoBehaviour
     private GameObject waterObj;
     private GameObject surfaceObj;
     private GameObject waterFX;
-    private GameObject drops;
+    private GameObject waveObj;
     private GameObject plantToSpawn;
     private GameObject selectedObj;
     private GameObject pauseUI;
@@ -99,7 +102,7 @@ public class CursorController : MonoBehaviour
         arrowUI = GameObject.Find("Tool Picker Arrow");
         plantUI = GameObject.Find("PlantCanvas");
         pinataUI = GameObject.Find("PinataCanvas");
-        drops = GameObject.Find("WaterDrops");
+        waveObj = GameObject.Find("WaveMover");
 
         //Tool Specific Variables
         waterFX = GameObject.Find("WaterFX");
@@ -202,7 +205,6 @@ public class CursorController : MonoBehaviour
                     plantUI.SetActive(true);
                     selectedObj = currentCol.gameObject;
                     plantUI.transform.position = selectedObj.transform.position;
-                    updateDrops();
                 }
                 else if (currentCol != null && currentCol.tag == "Pinata")
                 {
@@ -307,31 +309,24 @@ public class CursorController : MonoBehaviour
                 }
             }
 
-            //Plant Profile is up, update the info
-            if (plantUI.activeSelf && !pinataUI.activeSelf)
+
+        }
+        //Plant Profile is up, update the info
+        if (plantUI.activeSelf && !pinataUI.activeSelf)
+        {
+            //WAVE
+            curWave += Time.deltaTime * 30;
+            if (curWave > waveMax)
             {
-                float wL=selectedObj.GetComponent<Plant>().waterLevel;
-                if (wL < 40)
-                {
-                    drops.transform.GetChild(0).localScale = new Vector3(wL/40, wL / 40, 0);
-                }
-                else if (wL < 80)
-                {
-                    drops.transform.GetChild(1).localScale = new Vector3((wL - 40) / 40, (wL - 40) / 40, 0);
-                }
-                else if (wL < 120)
-                {
-                    drops.transform.GetChild(2).localScale = new Vector3((wL - 80) / 40, (wL - 80) / 40, 0);
-                }
-                else if (wL < 160)
-                {
-                    drops.transform.GetChild(3).localScale = new Vector3((wL - 120) / 40, (wL - 120) / 40, 0);
-                }
-                else if (wL < 200)
-                {
-                    drops.transform.GetChild(4).localScale = new Vector3((wL - 160) / 40, (wL - 160) / 40, 0);
-                }
+                curWave = waveMin;
             }
+            waveObj.transform.GetChild(0).localPosition = new Vector3(curWave, 0, 0);
+
+            //DROP FILL
+            float wL = selectedObj.GetComponent<Plant>().waterLevel;
+            float waveY = -40 + 80 * (wL / 200);
+
+            waveObj.transform.localPosition = new Vector3(0, waveY, 0);
         }
     }
     
@@ -644,47 +639,6 @@ public class CursorController : MonoBehaviour
         }
     }
 
-    public void updateDrops()
-    {
-        float wL = selectedObj.GetComponent<Plant>().waterLevel;
-        if (wL < 40)
-        {
-            drops.transform.GetChild(1).localScale = new Vector3(0,0,0);
-            drops.transform.GetChild(2).localScale = new Vector3(0,0,0);
-            drops.transform.GetChild(3).localScale = new Vector3(0,0,0);
-            drops.transform.GetChild(4).localScale = new Vector3(0,0,0);
-        }
-        else if (wL < 80)
-        {
-            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(2).localScale = new Vector3(0, 0, 0);
-            drops.transform.GetChild(3).localScale = new Vector3(0, 0, 0);
-            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
-        }
-        else if (wL < 120)
-        {
-            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(3).localScale = new Vector3(0, 0, 0);
-            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
-        }
-        else if (wL < 160)
-        {
-            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(2).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(4).localScale = new Vector3(0, 0, 0);
-        }
-        else if (wL < 200)
-        {
-            drops.transform.GetChild(0).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(1).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(2).localScale = new Vector3(1, 1, 1);
-            drops.transform.GetChild(3).localScale = new Vector3(1, 1, 1);
-        }
-        return;
-    }
-
     //Plant is tapped after growth and should release bud and die
     public IEnumerator TapPlantDeath()
     {
@@ -832,6 +786,8 @@ public class CursorController : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
         {
+            StartCoroutine(ScaleCursor(collision.gameObject.GetComponent<Pickup>().size));
+            StartCoroutine(StickCursor(collision.gameObject.transform.position));
             topRightImg.sprite = noYTR;
             aText.text = "Sell Item";
             currentCol = collision;
@@ -842,6 +798,8 @@ public class CursorController : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Pinata" && toolList[curTool] == "Select")
         {
+            StartCoroutine(ScaleCursor(collision.gameObject.GetComponent<Pinata>().size));
+            StartCoroutine(StickCursor(collision.gameObject.transform.position));
             topRightImg.sprite = noYTR;
             aText.text = "Select Pinata";
             currentCol = collision;

@@ -24,6 +24,7 @@ public class Pinata : MonoBehaviour
 {
     public bool inCour;
     public string breed;
+    public float size;
     public bool ableToVisit;
     public bool resident;
     public bool inGarden;

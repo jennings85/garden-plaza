@@ -126,6 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupName: Rose Petal
   candyValue: 500
+  size: -2
   startTime: 0
   endTime: 180
 --- !u!65 &711940665
