@@ -25,6 +25,7 @@ public class CursorController : MonoBehaviour
     private float speed = 10;
     private float cursorSize = -1;
     private float aim_angle = 0;
+    private string surfaceBelow = "Grass";
     private string selectedSeed = "Rose";
     private string curTexture = "Grass";
     private string[] toolList = { "Select", "Shovel", "Watering Can", "Surface Packet", "Seed Bag"};
@@ -59,6 +60,7 @@ public class CursorController : MonoBehaviour
     private Sprite fullTR;
     private Sprite noYTR;
     private Sprite noATR;
+    private Sprite noAbYTR;
     private Image topRightImg;
     private TMPro.TextMeshProUGUI residentTxt;
     private Text sellText;
@@ -90,6 +92,7 @@ public class CursorController : MonoBehaviour
         fullTR = Resources.Load<Sprite>("Images/uiPiece");
         noYTR = Resources.Load<Sprite>("Images/uiPiece_noY");
         noATR = Resources.Load<Sprite>("Images/uiPiece_noA");
+        noAbYTR = Resources.Load<Sprite>("Images/uiPiece_noA_butY");
 
         //UI Variables
         aText = GameObject.Find("A_TEXT").GetComponent<Text>();
@@ -202,9 +205,7 @@ public class CursorController : MonoBehaviour
                 //A is pressed and you are on a plant
                 if (currentCol != null && currentCol.tag == "Plant")
                 {
-                    plantUI.SetActive(true);
-                    selectedObj = currentCol.gameObject;
-                    plantUI.transform.position = selectedObj.transform.position;
+
                 }
                 else if (currentCol != null && currentCol.tag == "Pinata")
                 {
@@ -298,12 +299,25 @@ public class CursorController : MonoBehaviour
             //Seed Bag is out
             else if(toolList[curTool] == "Seed Bag")
             {
-                if (Input.GetButtonDown("A") && (seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Idle") && currentCol == null))
+                surfaceBelow = TextureOnTopOf();
+                if (surfaceBelow == "Sand")
                 {
-                    seedAnim.SetBool("IsPlacing", true);
-                    SeedPlant(selectedSeed);
+                    topRightImg.sprite = noAbYTR;
+                    aText.text = "";
                 }
-                else if(Input.GetButtonDown("Y"))
+                else
+                {
+                    topRightImg.sprite = fullTR;
+                    aText.text = "Plant";
+
+                    if (Input.GetButtonDown("A") && (seedAnim.GetCurrentAnimatorStateInfo(0).IsName("SeedBag_Idle") && currentCol == null))
+                    {
+                        seedAnim.SetBool("IsPlacing", true);
+                        SeedPlant(selectedSeed);
+                    }
+                }
+
+                if (Input.GetButtonDown("Y"))
                 {
                     //switch seed
                 }
@@ -606,12 +620,12 @@ public class CursorController : MonoBehaviour
     //B was pressed, close UI or make tool Select
     private void BackButtonPressed()
     {
-        if(plantUI.activeSelf || pinataUI.activeSelf)
-        {
-            pinataUI.SetActive(false);
-            plantUI.SetActive(false);
-        }
-        else if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
+        //if(plantUI.activeSelf || pinataUI.activeSelf)
+        //{
+        //    pinataUI.SetActive(false);
+        //    plantUI.SetActive(false);
+        //}
+        if(!canAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !seedAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE") && !shovelAnim.GetCurrentAnimatorStateInfo(0).IsTag("MOVE"))
         {
             ChangeTool(curTool,0);
         }
@@ -769,6 +783,10 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
+            currentCol = collision;
+            plantUI.SetActive(true);
+            selectedObj = currentCol.gameObject;
+            plantUI.transform.position = selectedObj.transform.position;
             StartCoroutine(ScaleCursor(collision.gameObject.GetComponent<Plant>().size));
             StartCoroutine(StickCursor(collision.gameObject.transform.position));
             //Debug.Log("Entered: " +collision.gameObject.name);
@@ -782,7 +800,6 @@ public class CursorController : MonoBehaviour
                 topRightImg.sprite = fullTR;
                 yText.text = "Tap Plant";
             }
-            currentCol = collision;
         }
         else if (collision.gameObject.tag == "Pickup" && toolList[curTool] == "Select")
         {
@@ -814,6 +831,9 @@ public class CursorController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Plant")
         {
+            //Left plant, hide UI
+            plantUI.SetActive(false);
+
             StartCoroutine(ScaleCursor(-1));
             //Debug.Log("Exited: " +collision.gameObject.name);
             currentCol = null;
